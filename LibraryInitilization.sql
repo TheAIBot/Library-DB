@@ -248,6 +248,26 @@ CREATE TABLE IF NOT EXISTS `Library`.`Loans` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `Library`.`LibraryOpeningHours`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Library`.`LibraryOpeningHours` ;
+
+CREATE TABLE IF NOT EXISTS `Library`.`LibraryOpeningHours` (
+  `OpeningTime` ENUM('Monday', 'Tuesday', 'Wedensday', 'Thursday', 'Friday') NOT NULL,
+  `LibraryID` INT NOT NULL,
+  `TimeStart` DATE NOT NULL,
+  `TimeEnd` DATE NOT NULL,
+  PRIMARY KEY (`LibraryID`, `OpeningTime`),
+  INDEX `fk_LibraryOpeningHours_Libraries1_idx` (`LibraryID` ASC),
+  CONSTRAINT `fk_LibraryOpeningHours_Libraries1`
+    FOREIGN KEY (`LibraryID`)
+    REFERENCES `Library`.`Libraries` (`LibraryID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
