@@ -27,7 +27,6 @@ CREATE TABLE IF NOT EXISTS `Library`.`Libraries` (
   `ZipCode` DECIMAL(4,0) NOT NULL,
   `StreetName` VARCHAR(45) NOT NULL,
   `Capacity` INT NOT NULL,
-  `Open` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`LibraryID`))
 ENGINE = InnoDB;
 
