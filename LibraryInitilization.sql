@@ -255,8 +255,8 @@ DROP TABLE IF EXISTS `Library`.`LibraryOpeningHours` ;
 CREATE TABLE IF NOT EXISTS `Library`.`LibraryOpeningHours` (
   `OpeningTime` ENUM('Monday', 'Tuesday', 'Wedensday', 'Thursday', 'Friday') NOT NULL,
   `LibraryID` INT NOT NULL,
-  `TimeStart` DATE NOT NULL,
-  `TimeEnd` DATE NOT NULL,
+  `TimeStart` TIME(0) NOT NULL,
+  `TimeEnd` TIME(0) NOT NULL,
   PRIMARY KEY (`LibraryID`, `OpeningTime`),
   INDEX `fk_LibraryOpeningHours_Libraries1_idx` (`LibraryID` ASC),
   CONSTRAINT `fk_LibraryOpeningHours_Libraries1`

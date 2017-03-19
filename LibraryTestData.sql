@@ -5,7 +5,7 @@ insert into `libraries` values (1001,'Egedal Bibliotek','34H',3850,'Træhusevej'
 (1002,'Birkerød Bibliotek','12J',3450,'Træhusevej',12000),
 (1003,'Thisted Bibliotek','42G',7000,'Pipedrejervej',20000);
 
-/* Test data for libraries*/
+/* Test data for publisher*/
 insert into `publisher` values (2001,'Matematik Forlaget','78Q','Matricevej',9999,NULL),
 (2002,'Computer Forlaget','13A','Databasevej',5555, NULL),
 (2003,'Awesome Forlaget','Rytterkær','139',2765,'666');
@@ -34,3 +34,36 @@ insert into `loaners` values (5001,'Terkel','Stenstrøm','Hansen','Edderkoppedal
 insert into `authers` values (6001,'Karsten',null, 'Schmidt','1940-07-26'),
 (6002,'Flemming',null,'Schmidt','1960-05-13'),
 (6003,'Jesper', 'Birch', 'Samsø','1996-03-30');
+
+/*Test data for WrittenBy */
+insert into `WrittenBy` values (6001,1000743468643),
+(6002,1000863668841),
+(6003,1001234567123);
+
+/*Test data for RegisteredAt */
+insert into `RegisteredAt` values (1001,5001,'2007-04-17'),
+(1002,5002,'2000-01-19'),
+(1003,5003,'2025-07-13');
+
+
+/*Test data for Loans */
+insert into `Loans` values (7001,3001,5001,4001,'2017-02-12','2017-02-26','2017-02-25'),
+(7002,3022,5002,4002,'2016-08-01','2016-08-15','2016-08-27'),
+(7003,3072,5003,4003,'2025-09-14','2025-09-28','2025-09-26');
+
+/*Test data for LibraryOpeningHours */
+insert into `LibraryOpeningHours` values ('Monday',1001,'08:00:00','16:00:00'),
+('Tuesday',1001,'08:00:00','16:00:00'),
+('Wedensday',1001,'08:00:00','16:00:00'),
+('Thursday',1001,'08:00:00','16:00:00'),
+('Friday',1001,'08:00:00','16:00:00'),
+('Monday',1002,'08:00:00','16:00:00'),
+('Tuesday',1002,'08:00:00','16:00:00'),
+('Wedensday',1002,'08:00:00','16:00:00'),
+('Thursday',1002,'08:00:00','17:00:00'),
+('Friday',1002,'08:00:00','16:00:00'),
+('Monday',1003,'08:00:00','16:00:00'),
+('Tuesday',1003,'08:00:00','18:00:00'),
+('Wedensday',1003,'08:00:00','16:00:00'),
+('Thursday',1003,'08:00:00','16:00:00'),
+('Friday',1003,'08:00:00','16:00:00');
