@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `Library`.`Books` (
   `ISBN` DECIMAL(13,0) NOT NULL,
   `PublisherID` INT NOT NULL,
   `DatePublish` DATE NOT NULL,
-  `Title` DATETIME NOT NULL,
+  `Title` VARCHAR(45) NOT NULL,
   `Price` DECIMAL(6,2) NOT NULL,
   PRIMARY KEY (`ISBN`),
   INDEX `fk_Books_Publisher1_idx` (`PublisherID` ASC),
