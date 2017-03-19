@@ -11,13 +11,16 @@
 		#get all articles that a librarian is currently resposible for
 		#get all articles a librarian has loaned out
     #--library--
-		#move article from one library to another
-        #move librarian from one libraryto another
 		#get a librarys books
 		#get librarians that work for a specific library
         #get all loaners that currently loan an article from that library
         #create new article
 	#--article--
     
+        
+#--transactions--
+	#move article from one library to another
+	#move librarian from one libraryto another
+
         
 #--triggers--
