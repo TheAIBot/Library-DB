@@ -267,6 +267,24 @@ CREATE TABLE IF NOT EXISTS `Library`.`LibraryOpeningHours` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `Library`.`PhoneNumbers`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Library`.`PhoneNumbers` ;
+
+CREATE TABLE IF NOT EXISTS `Library`.`PhoneNumbers` (
+  `PhoneNumbers` DECIMAL(8,0) NOT NULL,
+  `PublisherID` INT NOT NULL,
+  INDEX `fk_PhoneNumbers_Publisher1_idx` (`PublisherID` ASC),
+  PRIMARY KEY (`PublisherID`, `PhoneNumbers`),
+  CONSTRAINT `fk_PhoneNumbers_Publisher1`
+    FOREIGN KEY (`PublisherID`)
+    REFERENCES `Library`.`Publisher` (`PublisherID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

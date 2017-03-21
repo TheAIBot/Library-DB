@@ -21,7 +21,16 @@ insert into `books` values (1000743468643,2001,'2003-07-07','Crazy Horse and Cus
 #id starts at 3000
 insert into `article` values (3001,'2004-09-12',1001,1001,'Faglitteratur',1000743468643),
 (3022,'1995-01-03',1003,1001,'Faglitteratur',1000863668841),
-(3072,'2015-01-03',1002,1001,'Awesomelitteratur',1001234567123);
+(3072,'2015-01-03',1002,1001,'Awesomelitteratur',1001234567123),
+(3002,'2004-09-18',1002,1002,'Faglitteratur',1000743468643),
+(3003,'1995-01-09',1002,1002,'Faglitteratur',1000863668841),
+(3004,'2015-02-23',1002,1002,'Awesomelitteratur',1001234567123),
+(3005,'2006-02-27',1003,1003,'Faglitteratur',1000743468643),
+(3006,'1999-02-04',1003,1003,'Faglitteratur',1000863668841),
+(3007,'2016-04-25',1003,1003,'Awesomelitteratur',1001234567123),
+(3008,'2004-09-18',1002,1003,'Faglitteratur',1000743468643),
+(3009,'1995-01-09',1003,1002,'Faglitteratur',1000863668841),
+(3010,'2015-02-23',1001,1001,'Awesomelitteratur',1001234567123);
 
 /*Test data for Librarian */
 #id starts at 4000
@@ -74,3 +83,9 @@ insert into `LibraryOpeningHours` values ('Monday',1001,'08:00:00','16:00:00'),
 ('Wedensday',1003,'08:00:00','16:00:00'),
 ('Thursday',1003,'08:00:00','16:00:00'),
 ('Friday',1003,'08:00:00','16:00:00');
+
+/*Test data for PhoneNumbers */
+insert into `PhoneNumbers` values (11223344,2001),
+(13223344,2001),
+(98345455,2002),
+(12434555,2003);
