@@ -65,13 +65,97 @@ DELIMITER ;
 select * from Article;
 
 
+#(*) need more test data so this one can be tested
 #get the articles that a loaner is currently borrowing
-select * from Loaners natural join Loans;
+DROP PROCEDURE IF EXISTS GetCurrentArticlesLoanedByLoaner;
+DELIMITER //
+CREATE PROCEDURE GetCurrentArticlesLoanedByLoaner
+(IN vLoanerID INT)
+BEGIN
+#(*) filter selected columns so they make more sense
+select * from Loaners natural join Loans
+where LoanerID = vLoanerID AND PeriodEnd = NULL;
+END; //
+DELIMITER ;
+
+#get a loaners loaning history
+DROP PROCEDURE IF EXISTS GetLoanerHistory;
+DELIMITER //
+CREATE PROCEDURE GetLoanerHistory
+(IN vLoanerID INT)
+BEGIN
+#(*) filter selected columns so they make more sense
+select * from Loaners natural join Loans
+where LoanerID = vLoanerID;
+END; //
+DELIMITER ;
+
+#(*) for some reason this one doesn't seem to work
+#get all loans that a loaner returned on time
+DROP PROCEDURE IF EXISTS GetLoanersArticlesReturnedOnTime;
+DELIMITER //
+CREATE PROCEDURE GetLoanersArticlesReturnedOnTime
+(IN vLoanerID INT)
+BEGIN
+#(*) filter selected columns so they make more sense
+select * from Loaners natural join Loans
+where LoanerID = vLoanerID AND DATE(PeriodEnd) != NULL AND DATE(PeriodEnd) <= DATE(ReturnDate);
+END; //
+DELIMITER ;
+
+#get all loans that a loaner returned too late
+DROP PROCEDURE IF EXISTS GetLoanersArticlesReturnedTooLate;
+DELIMITER //
+CREATE PROCEDURE GetLoanersArticlesReturnedTooLate
+(IN vLoanerID INT)
+BEGIN
+#(*) filter selected columns so they make more sense
+select * from Loaners natural join Loans
+where LoanerID = vLoanerID AND ((DATE(PeriodEnd) = NULL AND DATE(ReturnDate) > CURDATE()) OR DATE(PeriodEnd) > DATE(ReturnDate));
+END; //
+DELIMITER ;
+
+#get all articles that a librarian is currently resposible for
+DROP PROCEDURE IF EXISTS GetLibrarianArticlesResponsibleFor;
+DELIMITER //
+CREATE PROCEDURE GetLibrarianArticlesResponsibleFor
+(IN vLibrarianID INT)
+BEGIN
+#(*) filter selected columns so they make more sense
+select * from Loans
+where LibrarianID = vLibrarianID AND PeriodEnd = NULL;
+END; //
+DELIMITER ;
+
+#get all articles a librarian has loaned out
+DROP PROCEDURE IF EXISTS GetLibrarianLoanedOutArticlesHistory;
+DELIMITER //
+CREATE PROCEDURE GetLibrarianLoanedOutArticlesHistory
+(IN vLibrarianID INT)
+BEGIN
+#(*) filter selected columns so they make more sense
+select * from Loans
+where LibrarianID = vLibrarianID;
+END; //
+DELIMITER ;
+
+#get a librarys books
+DROP PROCEDURE IF EXISTS GetLibraryBooks;
+DELIMITER //
+CREATE PROCEDURE GetLibraryBooks
+(IN vLibraryID INT)
+BEGIN
+#(*) filter selected columns so they make more sense
+select * from Article
+where BelongsToID = vLibraryID;
+END; //
+DELIMITER ;
+
+call GetLibraryBooks(1002);
 
 
 
 
-
-
+select * from Article;
 
 
