@@ -1,14 +1,14 @@
 Use Library;
 
 /* Test data for libraries*/
-insert into `Libraries` values 
-(1001,'Egedal Bibliotek','34H',3850,'Træhusevej',40000),
+#id starts at 1000
+insert into `libraries` values (1001,'Egedal Bibliotek','34H',3850,'Træhusevej',40000),
 (1002,'Birkerød Bibliotek','12J',3450,'Træhusevej',12000),
 (1003,'Thisted Bibliotek','42G',7000,'Pipedrejervej',20000);
 
 /* Test data for publisher*/
-insert into `Publisher` values 
-(2001,'Matematik Forlaget','78Q','Matricevej',9999,NULL),
+#id starts at 2000
+insert into `publisher` values (2001,'Matematik Forlaget','78Q','Matricevej',9999,NULL),
 (2002,'Computer Forlaget','13A','Databasevej',5555, NULL),
 (2003,'Awesome Forlaget','Rytterkær','139',2765,'666');
 
@@ -26,8 +26,7 @@ insert into `Article` values
 (3072,'2015-01-03',1002,1001,'Awesomelitteratur',1001234567123);
 
 /*Test data for Librarian */
-insert into `Librarian` values 
-(4001,'Beate','Stenstrøm','Habberbug','S69','Edderkoppedal',3850,'1970-08-12',26000,1001,'1995-12-12',null),
+insert into `librarian` values (4001,'Beate','Stenstrøm','Habberbug','S69','Edderkoppedal',3850,'1970-08-12',26000,1001,'1995-12-12',null),
 (4002,'Per',null,'Jensen','84V','Saturnvej',3450,'1980-11-01',27000,1002,'2005-12-12',null),
 (4003,'Anders','Samsø','Birch','139','Rytterkær',7000,'1996-03-30',30000,1003,'2016-01-05',null);
 
