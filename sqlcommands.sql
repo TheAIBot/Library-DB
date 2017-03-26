@@ -1,36 +1,8 @@
-#--Procedues--
-	#--loaner--
-		#create new loaner -- CreateLoaner
-        #get the articles that a loaners is currently borrowing
-		#get a loaners loaning history
-        #get all loans that a loaner returned too soon
-	#--librarian--
-		#create new librarian -- CreateLibrarian
-        #loan book to loaner -- Can't currently be made
-        #return article that a loaner loaned -- Can't currently be made
-        #get all articles that a librarian is currently resposible for
-		#get all articles a librarian has loaned out
-    #--library--
-		#get a librarys books
-		#get librarians that work for a specific library
-        #get all loaners that currently loan an article from that library
-    #--book--
-		#create new book -- CreateBook
-	#--article--
-		#create new article -- CreateBook
-    
-        
-#--transactions--
-	#move article from one library to another
-	#move librarian from one libraryto another
-
-        
-#--triggers--
-
-using library
+Use library;
 
 #--Procedues--
 #create new loaner
+DROP PROCEDURE IF EXISTS CreateLoaner;
 DELIMITER //
 CREATE PROCEDURE CreateLoaner
 (IN vLoanerID INT, IN vFirstName VARCHAR(45), IN vMiddleName VARCHAR(45), IN vLastName VARCHAR(45), IN vStreetName VARCHAR(45),IN vZipCode VARCHAR(45), IN vStreetNumber VARCHAR(45), IN vDateOfBirth VARCHAR(45))
@@ -41,6 +13,7 @@ END; //
 DELIMITER ;
 
 #create new librarian
+DROP PROCEDURE IF EXISTS CreateLibrarian;
 DELIMITER //
 CREATE PROCEDURE CreateLibrarian
 (IN vLibrarianID INT, IN vFirstName VARCHAR(45), IN vMiddleName VARCHAR(45), IN vLastName VARCHAR(45), IN vStreetNumber VARCHAR(45), IN vStreetName VARCHAR(45), IN vZipCode VARCHAR(45), IN vDateOfBirth DATE, IN vSalary INT, IN vLibraryID INT, IN vStartDate DATE, IN vEndDate DATE)
@@ -57,9 +30,10 @@ DELIMITER ;
 #CAN'T BE DONE YET BECAUSE LOAN NEEDS TO BE VERIFIED TO WORK CORRECTLY
 
 #create new book
+DROP PROCEDURE IF EXISTS CreateBook;
 DELIMITER //
 CREATE PROCEDURE CreateBook
-(IN vISBN DECIMAL(13,0), IN vPublisherID INT, IN vDatePublish DATE, IN vTitle DATETIME, IN vPrice DECIMAL(6,2))
+(IN vISBN DECIMAL(13,0), IN vPublisherID INT, IN vDatePublish DATE, IN vTitle VARCHAR(45), IN vPrice DECIMAL(6,2))
 BEGIN
 INSERT Books(ISBN, PublisherID, DatePublish, Title, Price)
 VALUES (vISBN, vPublisherID, vDatePublish, vTitle, vPrice);
@@ -67,6 +41,7 @@ END; //
 DELIMITER ;
 
 #create new article
+DROP PROCEDURE IF EXISTS CreateArticle;
 DELIMITER //
 CREATE PROCEDURE CreateArticle
 (IN vArticleID INT, IN vDateBought DATE, IN vPlacementID INT, IN vBelongsToID INT, IN vPlacement VARCHAR(45), IN vISBN DECIMAL(13,0))
@@ -75,6 +50,23 @@ INSERT Article(ArticleID, DateBought, PlacementID, BelongsToID, Placement, ISBN)
 VALUES (vArticleID, vDateBought, vPlacementID, vBelongsToID, vPlacement, vISBN);
 END; //
 DELIMITER ;
+
+#create new book and article
+DROP PROCEDURE IF EXISTS CreateTestBookAndArticle;
+DELIMITER //
+CREATE PROCEDURE CreateTestBookAndArticle
+(IN vISBN DECIMAL(13,0), IN vPublisherID INT, IN vTitle VARCHAR(45), IN vPrice DECIMAL(6,2), IN vArticleID INT, IN vDatePublish DATE, IN vPlacementID INT)
+BEGIN
+call CreateBook(vISBN, vPublisherID, vDatePublish, vTitle, vPrice);
+call CreateArticle(vArticleID, vDatePublish, vPlacementID, vPlacementID, "Testlitteratur", vISBN);
+END; //
+DELIMITER ;
+
+select * from Article;
+
+
+#get the articles that a loaner is currently borrowing
+select * from Loaners natural join Loans;
 
 
 

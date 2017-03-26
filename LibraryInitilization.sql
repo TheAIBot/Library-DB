@@ -19,7 +19,6 @@ USE `Library` ;
 -- Table `Library`.`Libraries`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Library`.`Libraries` ;
-
 CREATE TABLE IF NOT EXISTS `Library`.`Libraries` (
   `LibraryID` INT NOT NULL,
   `Name` VARCHAR(45) NOT NULL,
@@ -35,7 +34,6 @@ ENGINE = InnoDB;
 -- Table `Library`.`Publisher`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Library`.`Publisher` ;
-
 CREATE TABLE IF NOT EXISTS `Library`.`Publisher` (
   `PublisherID` INT NOT NULL,
   `Name` VARCHAR(45) NOT NULL,
@@ -51,7 +49,6 @@ ENGINE = InnoDB;
 -- Table `Library`.`Books`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Library`.`Books` ;
-
 CREATE TABLE IF NOT EXISTS `Library`.`Books` (
   `ISBN` DECIMAL(13,0) NOT NULL,
   `PublisherID` INT NOT NULL,
@@ -72,7 +69,6 @@ ENGINE = InnoDB;
 -- Table `Library`.`Article`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Library`.`Article` ;
-
 CREATE TABLE IF NOT EXISTS `Library`.`Article` (
   `ArticleID` INT NOT NULL,
   `DateBought` DATE NOT NULL,
@@ -106,7 +102,6 @@ ENGINE = InnoDB;
 -- Table `Library`.`Librarian`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Library`.`Librarian` ;
-
 CREATE TABLE IF NOT EXISTS `Library`.`Librarian` (
   `LibrarianID` INT NOT NULL,
   `FirstName` VARCHAR(45) NOT NULL,
@@ -134,7 +129,6 @@ ENGINE = InnoDB;
 -- Table `Library`.`Loaners`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Library`.`Loaners` ;
-
 CREATE TABLE IF NOT EXISTS `Library`.`Loaners` (
   `LoanerID` INT NOT NULL,
   `FirstName` VARCHAR(45) NOT NULL,
@@ -152,7 +146,6 @@ ENGINE = InnoDB;
 -- Table `Library`.`Authers`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Library`.`Authers` ;
-
 CREATE TABLE IF NOT EXISTS `Library`.`Authers` (
   `AuthersID` INT NOT NULL,
   `FirstName` VARCHAR(45) NOT NULL,
@@ -167,7 +160,6 @@ ENGINE = InnoDB;
 -- Table `Library`.`WrittenBy`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Library`.`WrittenBy` ;
-
 CREATE TABLE IF NOT EXISTS `Library`.`WrittenBy` (
   `AuthersID` INT NOT NULL,
   `ISBN` DECIMAL(13,0) NOT NULL,
@@ -191,7 +183,6 @@ ENGINE = InnoDB;
 -- Table `Library`.`RegisteredAt`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Library`.`RegisteredAt` ;
-
 CREATE TABLE IF NOT EXISTS `Library`.`RegisteredAt` (
   `LibraryID` INT NOT NULL,
   `LoanerID` INT NOT NULL,
@@ -216,7 +207,6 @@ ENGINE = InnoDB;
 -- Table `Library`.`Loans`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Library`.`Loans` ;
-
 CREATE TABLE IF NOT EXISTS `Library`.`Loans` (
   `LoanID` INT NOT NULL,
   `ArticleID` INT NOT NULL,
@@ -251,7 +241,6 @@ ENGINE = InnoDB;
 -- Table `Library`.`LibraryOpeningHours`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Library`.`LibraryOpeningHours` ;
-
 CREATE TABLE IF NOT EXISTS `Library`.`LibraryOpeningHours` (
   `OpeningTime` ENUM('Monday', 'Tuesday', 'Wedensday', 'Thursday', 'Friday') NOT NULL,
   `LibraryID` INT NOT NULL,
