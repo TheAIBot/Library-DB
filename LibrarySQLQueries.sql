@@ -6,21 +6,36 @@ CREATE VIEW BookArticles AS
 
 SELECT * FROM BookArticles;
 
-#Find all the books lend out (at any time), by a user with user id 5003, and gives the time for the loan:
+#Find all the books lend out (at any time), by a user with user id 5003, 
+#and gives the period for the loan. This sorted by the loans start date:
 SELECT Title, PeriodStart, ReturnDate
 FROM BookArticles NATURAL JOIN Loans
-WHERE LoanerID = 5003;
+WHERE LoanerID = 5003
+ORDER BY PeriodStart;
 
 #Find the count of the total number of books lend out by that user:
 SELECT count(*) AS NumberOfLendBooks
 FROM BookArticles NATURAL JOIN Loans
 WHERE LoanerID = 5003;
 
-#Find all the books lend out at a given date, chosen as '2017-02-25':
+#Find for all books the number of copies that is lend out of it, at a given date, here taken as'2017-02-25':
 SELECT Title, ArticleID, LoanerID
-FROM BookArticles NATURAL JOIN Loans
+FROM BookArticles JOIN Loans
 WHERE ('2017-02-20' BETWEEN PeriodStart and ReturnDate) OR  # In the case that it haven't been returned yet.
-	  ((PeriodStart <= '2017-02-20' ) AND ReturnDate IS NULL);
+	  ((PeriodStart <= '2017-02-20' ) AND ReturnDate IS NULL)
+ORDER BY Title;
+
+
+#A variant of the queri above: 
+#Give the count of the number of a given book that is lend out at a given date:
+SELECT Title, Count(*) AS NumberLendOut #(*) Check correct.
+FROM BookArticles NATURAL RIGHT OUTER JOIN Loans
+WHERE ('2017-02-20' BETWEEN PeriodStart and ReturnDate) OR  # In the case that it haven't been returned yet.
+  ((PeriodStart <= '2017-02-20' ) AND ReturnDate IS NULL)
+GROUP BY Title
+ORDER BY Title;
+      
+
 
 Select * from Loans NATURAL JOIN Loaners;
 
@@ -41,7 +56,6 @@ WHERE CONCAT(Authers.FirstName, ' ', Authers.MiddleName, ' ', Authers.LastName) 
 
 
 #Find all the authers that a certain person has lend books from.
-	#Make output unique(*)
 SELECT DISTINCT CONCAT(Authers.FirstName, ' ', Authers.MiddleName, ' ', Authers.LastName) AS AutherName, AuthersID
 FROM  (SELECT ISBN 
 	   FROM (Loaners NATURAL JOIN Loans) NATURAL JOIN Article
