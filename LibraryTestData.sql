@@ -2,13 +2,13 @@ Use Library;
 
 /* Test data for libraries*/
 #id starts at 1000
-insert into `libraries` values (1001,'Egedal Bibliotek','34H',3850,'Træhusevej',40000),
+insert into `Libraries` values (1001,'Egedal Bibliotek','34H',3850,'Træhusevej',40000),
 (1002,'Birkerød Bibliotek','12J',3450,'Træhusevej',12000),
 (1003,'Thisted Bibliotek','42G',7000,'Pipedrejervej',20000);
 
 /* Test data for publisher*/
 #id starts at 2000
-insert into `publisher` values (2001,'Matematik Forlaget','78Q','Matricevej',9999,NULL),
+insert into `Publisher` values (2001,'Matematik Forlaget','78Q','Matricevej',9999,NULL),
 (2002,'Computer Forlaget','13A','Databasevej',5555, NULL),
 (2003,'Awesome Forlaget','Rytterkær','139',2765,'666');
 
@@ -16,6 +16,7 @@ insert into `publisher` values (2001,'Matematik Forlaget','78Q','Matricevej',999
 insert into `Books` values 
 (1000743468643,2001,'2003-07-07','Crazy Horse and Custer',000300.00),
 (1000863668841,2002,'1989-07-07','Solitons in Optical fibers',000700.00),
+(1000000000000,2003,'2014-03-02','Livet som Anders',000666.00),
 (1001234567123,2003,'2015-03-02','Livet som Jesper',000666.00);
 
 /*Test data for Article */
@@ -23,10 +24,11 @@ insert into `Article` values
 (3001,'2004-09-12',1001,1001,'Faglitteratur',1000743468643),
 (3002,'2004-09-12',1001,1001,'Faglitteratur',1000743468643),
 (3022,'1995-01-03',1003,1001,'Faglitteratur',1000863668841),
+(3052,'2014-01-03',1002,1001,'Awesomelitteratur',1000000000000),
 (3072,'2015-01-03',1002,1001,'Awesomelitteratur',1001234567123);
 
 /*Test data for Librarian */
-insert into `librarian` values (4001,'Beate','Stenstrøm','Habberbug','S69','Edderkoppedal',3850,'1970-08-12',26000,1001,'1995-12-12',null),
+insert into `Librarian` values (4001,'Beate','Stenstrøm','Habberbug','S69','Edderkoppedal',3850,'1970-08-12',26000,1001,'1995-12-12',null),
 (4002,'Per',null,'Jensen','84V','Saturnvej',3450,'1980-11-01',27000,1002,'2005-12-12',null),
 (4003,'Anders','Samsø','Birch','139','Rytterkær',7000,'1996-03-30',30000,1003,'2016-01-05',null);
 
@@ -62,7 +64,6 @@ insert into `Loans` values
 (7002,3022,5002,4002,'2016-08-01','2016-08-15','2016-08-27'),
 (7003,3072,5003,4003,'2025-09-14','2025-09-28','2025-09-26'),
 (7004,3072,5003,4003,'2026-09-14','2026-09-28','2026-09-26');
-
 /*Test data for LibraryOpeningHours */
 insert into `LibraryOpeningHours` values 
 ('Monday',1001,'08:00:00','16:00:00'),

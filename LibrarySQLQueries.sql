@@ -18,22 +18,27 @@ SELECT count(*) AS NumberOfLendBooks
 FROM BookArticles NATURAL JOIN Loans
 WHERE LoanerID = 5003;
 
-#Find for all books the number of copies that is lend out of it, at a given date, here taken as'2017-02-25':
+#Find all articles that is lend out at a given date, with their title and who have lent it, 
+#at a given date, here taken as'2017-02-25':
 SELECT Title, ArticleID, LoanerID
-FROM BookArticles JOIN Loans
-WHERE ('2017-02-20' BETWEEN PeriodStart and ReturnDate) OR  # In the case that it haven't been returned yet.
+FROM BookArticles NATURAL JOIN Loans
+WHERE ('2017-02-20' BETWEEN PeriodStart AND ReturnDate) OR  # In the case that it haven't been returned yet.
 	  ((PeriodStart <= '2017-02-20' ) AND ReturnDate IS NULL)
 ORDER BY Title;
 
 
 #A variant of the queri above: 
-#Give the count of the number of a given book that is lend out at a given date:
-SELECT Title, Count(*) AS NumberLendOut #(*) Check correct.
-FROM BookArticles NATURAL RIGHT OUTER JOIN Loans
-WHERE ('2017-02-20' BETWEEN PeriodStart and ReturnDate) OR  # In the case that it haven't been returned yet.
-  ((PeriodStart <= '2017-02-20' ) AND ReturnDate IS NULL)
-GROUP BY Title
+#Gives the count of the number of a given book that is lend out at a given date:
+SELECT Title, ISBN, SUM(IF(('2017-02-20' BETWEEN PeriodStart and ReturnDate) OR  # In the case that it haven't been returned yet.
+						   ((PeriodStart <= '2017-02-20' ) AND ReturnDate IS NULL),1,0)) AS NumberLendOut #All the books that have been lend out in the period
+FROM BookArticles NATURAL LEFT OUTER JOIN Loans
+GROUP BY ISBN
 ORDER BY Title;
+
+#Tests:
+SELECT * FROM Loans;
+SELECT Title, ISBN, PeriodStart, IF( ('2017-02-20' BETWEEN PeriodStart and ReturnDate) OR ((PeriodStart <= '2017-02-20' ) AND ReturnDate IS NULL),1,0) AS M
+FROM BookArticles NATURAL LEFT OUTER JOIN Loans;
       
 
 
@@ -64,8 +69,8 @@ FROM  (SELECT ISBN
 WHERE (Books.ISBN = readBooks.ISBN);
 
 
-#Finds all the books owned AND not placed at a given library:
-SELECT Title,ArticleID
+#Finds all the books owned by AND not placed at a given library:
+SELECT Title, ArticleID, PlacementID
 FROM Libraries JOIN BookArticles ON BelongsToID = LibraryID
 WHERE LibraryID = 1001 AND PlacementID != 1001
 ORDER BY Title;
