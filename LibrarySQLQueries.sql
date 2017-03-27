@@ -18,16 +18,25 @@ SELECT count(*) AS NumberOfLendBooks
 FROM BookArticles NATURAL JOIN Loans
 WHERE LoanerID = 5003;
 
+#Finds all the loaners that currently have a book that is overdue.
+#Selects the Loaners name and ID, and the articles ID as well as the books title.
+SELECT LoanerID, CONCAT(FirstName, " ", MiddleName, " ", LastName) as LoanerName, ArticleID, Title
+FROM (BookArticles NATURAL JOIN Loans) NATURAL JOIN Loaners
+WHERE PeriodEnd < CURDATE() AND ReturnDate IS NULL
+ORDER BY LoanerName;
+
+
+
 #Find all articles that is lend out at a given date, with their title and who have lent it, 
 #at a given date, here taken as'2017-02-25':
 SELECT Title, ArticleID, LoanerID
 FROM BookArticles NATURAL JOIN Loans
-WHERE ('2017-02-20' BETWEEN PeriodStart AND ReturnDate) OR  # In the case that it haven't been returned yet.
+WHERE (('2017-02-20' BETWEEN PeriodStart AND ReturnDate) AND ReturnDate IS NOT NULL) OR  # In the case that it haven't been returned yet.
 	  ((PeriodStart <= '2017-02-20' ) AND ReturnDate IS NULL)
 ORDER BY Title;
 
 
-#A variant of the queri above: 
+#A variant of the query above: 
 #Gives the count of the number of a given book that is lend out at a given date:
 SELECT Title, ISBN, SUM(IF(('2017-02-20' BETWEEN PeriodStart and ReturnDate) OR  # In the case that it haven't been returned yet.
 						   ((PeriodStart <= '2017-02-20' ) AND ReturnDate IS NULL),1,0)) AS NumberLendOut #All the books that have been lend out in the period
@@ -57,7 +66,7 @@ SELECT CONCAT(Authers.FirstName, ' ', Authers.MiddleName, ' ', Authers.LastName)
 FROM (Books NATURAL JOIN WrittenBy) NATURAL JOIN Authers
 WHERE CONCAT(Authers.FirstName, ' ', Authers.MiddleName, ' ', Authers.LastName) = 'Jesper Samsø Birch'; 
 	#Can't reference AutherName, as it is an alias.
-#(*) Write functio for getting the autherName
+#(*) Write function for getting the autherName
 
 
 #Find all the authers that a certain person has lend books from.
@@ -70,7 +79,7 @@ WHERE (Books.ISBN = readBooks.ISBN);
 
 
 #Finds all the books owned by AND not placed at a given library:
-SELECT Title, ArticleID, PlacementID
+SELECT Title, ArticleID,Name, PlacementID
 FROM Libraries JOIN BookArticles ON BelongsToID = LibraryID
 WHERE LibraryID = 1001 AND PlacementID != 1001
 ORDER BY Title;
