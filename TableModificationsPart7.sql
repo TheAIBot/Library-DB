@@ -4,38 +4,6 @@ Use library;
 
 #make a transaction
 
-delimiter //
-create procedure addBook(Visbn decimal(13,0),VPublisherID INT, VDatePublish DATE, VTitle varchar(45),VPrice DECIMAL(6,2),VArticleID INT,VDateBought DATE,VPlacementID int,VBelongsToID int,VAuthersID int,Vcategory varchar(45))
-begin 
-declare ISBNtester decimal(13,0);
-
-start transaction;
-insert into `books` values (Visbn,VPublisherID,VDatePublish,VTitle,VPrice);
-insert into `article` values (VArticleID,VDateBought,VPlacementID,VBelongsToID,Visbn);
-insert into `writtenby` values (VAuthersID,Visbn);
-insert into `Litterature` values(Visbn,Vcategory);
-
-set ISBNtester = (select ISBN from books where books.ISBN=Visbn);
-if ISBNtester != (Visbn) then
-	rollback;
-end if;
-set ISBNtester = (select ISBN from article where article.ISBN=Visbn);
-if ISBNtester != (Visbn) then
-	rollback;
-end if;
-set ISBNtester = (select ISBN from writtenby where writtenby.ISBN=Visbn);
-if ISBNtester != (Visbn) then
-	rollback;
-end if;
-set ISBNtester = (select ISBN from Litterature where Litterature.ISBN=Visbn);
-if ISBNtester != (Visbn) then
-	rollback;
-end if;
-commit;
-
-end; //
-delimiter ;
-
 #Create a new book with the exsisting auther with id 2003
 #Show all possible articles
 call addBook(1000777777777,2003,'2007-05-22','Ebert and his errors',000180.00,3011,'2008-04-28',1003,1003,6003,'Faglitteratur');

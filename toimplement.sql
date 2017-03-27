@@ -1,7 +1,7 @@
 #--Procedues--
 	#--loaner--
 		#create new loaner -- CreateLoaner
-        #get the articles that a loaner is currently borrowing -- GetCurrentArticlesLoanedByLoaner
+        #get the books that a loaner is currently borrowing -- GetCurrentBooksLoanedByLoaner
 		#get a loaners loaning history -- GetLoanerHistory
         #get all loans that a loaner returned on time -- GetLoanersArticlesReturnedOnTime
         #get all loans that a loaner returned too late -- GetLoanersArticlesReturnedTooLate
