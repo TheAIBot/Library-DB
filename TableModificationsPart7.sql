@@ -2,6 +2,9 @@ Use library;
 #Delete from Article where ISBN =1000743468643;
 #might not work as the book is already being loaned by someone!
 
+#make a transaction
+
+
 #Create a new book with the exsisting auther with id 2003
 #Show all possible articles
 insert into `books` values (1000777777777,2003,'2007-05-22','Ebert and his errors',000180.00);
