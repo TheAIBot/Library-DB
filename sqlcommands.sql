@@ -224,6 +224,15 @@ end if;
 END; //
 DELIMITER ;
 
+DELIMITER //
+CREATE FUNCTION DeptInstCount (vFirstName VARCHAR(45), vMiddleName VARCHAR(45), vLastName VARCHAR(45))
+RETURNS VARCHAR(140)
+BEGIN
+RETURN CONCAT(COALESCE(vFirstName,''),' ',COALESCE(vMiddleName,''),' ',COALESCE(vLastName,''));
+END; //
+DELIMITER ;
+
+
 
 call ChangeLibrarianWorkLibrary(4001, 1001);
 
