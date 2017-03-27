@@ -7,6 +7,7 @@ insert into `libraries` values
 (1002,'Birkerød Bibliotek','12J',3450,'Træhusevej',12000),
 (1003,'Thisted Bibliotek','42G',7000,'Pipedrejervej',20000);
 
+
 /* Test data for publisher*/
 #id starts at 2000
 insert into `publisher` values 
@@ -20,12 +21,32 @@ insert into `books` values
 (1000863668841,2002,'1989-07-07','Solitons in Optical fibers',000700.00),
 (1001234567123,2003,'2015-03-02','Livet som Jesper',000666.00);
 
+/* Test data for Litterature*/
+insert into `Litterature` values(1000743468643,'Faglitteratur'),
+(1000863668841,'Faglitteratur'),
+(1001234567123,'Awesomelitteratur');
+
 /*Test data for Article */
 #id starts at 3000
+<<<<<<< HEAD
 insert into `article` values 
 (3001,'2004-09-12',1001,1001,'Faglitteratur',1000743468643),
 (3022,'1995-01-03',1003,1001,'Faglitteratur',1000863668841),
 (3072,'2015-01-03',1002,1001,'Awesomelitteratur',1001234567123);
+=======
+insert into `article` values (3001,'2004-09-12',1001,1001,1000743468643),
+(3022,'1995-01-03',1003,1001,1000863668841),
+(3072,'2015-01-03',1002,1001,1001234567123),
+(3002,'2004-09-18',1002,1002,1000743468643),
+(3003,'1995-01-09',1002,1002,1000863668841),
+(3004,'2015-02-23',1002,1002,1001234567123),
+(3005,'2006-02-27',1003,1003,1000743468643),
+(3006,'1999-02-04',1003,1003,1000863668841),
+(3007,'2016-04-25',1003,1003,1001234567123),
+(3008,'2004-09-18',1002,1003,1000743468643),
+(3009,'1995-01-09',1003,1002,1000863668841),
+(3010,'2015-02-23',1001,1001,1001234567123);
+>>>>>>> refs/remotes/origin/databaseDiagram
 
 /*Test data for Librarian */
 #id starts at 4000
@@ -63,10 +84,21 @@ insert into `RegisteredAt` values
 
 /*Test data for Loans */
 #id starts at 7000
+<<<<<<< HEAD
 insert into `Loans` values 
 (7001,3001,5001,4001,'2017-02-12','2017-02-26','2017-02-25'),
 (7002,3022,5002,4002,'2016-08-01','2016-08-15','2016-08-27'),
 (7003,3072,5003,4003,'2025-09-14','2025-09-28','2025-09-26');
+=======
+insert into `Loans` values (7001,5001,4001,'2017-02-12','2017-02-26'),
+(7002,5002,4002,'2016-08-01','2016-08-15'),
+(7003,5003,4003,'2025-09-14','2025-09-28');
+
+/*Test data for ArticleToLoans */
+insert into `ArticleToLoans` values (3001,7001,'2017-02-25'),
+(3022,7002,'2016-08-27'),
+(3072,7003,'2025-09-26');
+>>>>>>> refs/remotes/origin/databaseDiagram
 
 /*Test data for LibraryOpeningHours */
 insert into `LibraryOpeningHours` values 
@@ -86,6 +118,7 @@ insert into `LibraryOpeningHours` values
 ('Thursday',1003,'08:00:00','16:00:00'),
 ('Friday',1003,'08:00:00','16:00:00');
 
+<<<<<<< HEAD
 
 
 #create books and articles for all things J.R.R. Tolkien
@@ -103,3 +136,10 @@ call CreateTestBookAndArticle(9780439358071, 2003, 'Harry Potter And The Order O
 call CreateTestBookAndArticle(9780439785969, 2003, 'Harry Potter and the Half-Blood Prince',    46, 3110, '2006-5-25', 1002);
 call CreateTestBookAndArticle(9780545139700, 2003, 'Harry Potter and the Deathly Hallows',      67, 3111, '2009-5-7', 1002);
 
+=======
+/*Test data for PhoneNumbers */
+insert into `PhoneNumbers` values (11223344,2001),
+(13223344,2001),
+(98345455,2002),
+(12434555,2003);
+>>>>>>> refs/remotes/origin/databaseDiagram

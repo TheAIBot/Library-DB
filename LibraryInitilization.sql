@@ -74,7 +74,6 @@ CREATE TABLE IF NOT EXISTS `Library`.`Article` (
   `DateBought` DATE NOT NULL,
   `PlacementID` INT NOT NULL,
   `BelongsToID` INT NOT NULL,
-  `Placement` VARCHAR(45) NOT NULL,
   `ISBN` DECIMAL(13,0) NOT NULL,
   PRIMARY KEY (`ArticleID`),
   INDEX `fk_Article_Libraries_idx` (`PlacementID` ASC),
@@ -209,21 +208,13 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `Library`.`Loans` ;
 CREATE TABLE IF NOT EXISTS `Library`.`Loans` (
   `LoanID` INT NOT NULL,
-  `ArticleID` INT NOT NULL,
   `LoanerID` INT NOT NULL,
   `LibrarianID` INT NOT NULL,
   `PeriodStart` DATE NOT NULL,
   `PeriodEnd` DATE NOT NULL,
-  `ReturnDate` DATE NULL,
-  INDEX `fk_Loans_Article1_idx` (`ArticleID` ASC),
   INDEX `fk_Loans_Loaners1_idx` (`LoanerID` ASC),
   INDEX `fk_Loans_Librarian1_idx` (`LibrarianID` ASC),
   PRIMARY KEY (`LoanID`),
-  CONSTRAINT `fk_Loans_Article1`
-    FOREIGN KEY (`ArticleID`)
-    REFERENCES `Library`.`Article` (`ArticleID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `fk_Loans_Loaners1`
     FOREIGN KEY (`LoanerID`)
     REFERENCES `Library`.`Loaners` (`LoanerID`)
@@ -251,6 +242,65 @@ CREATE TABLE IF NOT EXISTS `Library`.`LibraryOpeningHours` (
   CONSTRAINT `fk_LibraryOpeningHours_Libraries1`
     FOREIGN KEY (`LibraryID`)
     REFERENCES `Library`.`Libraries` (`LibraryID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Library`.`PhoneNumbers`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Library`.`PhoneNumbers` ;
+
+CREATE TABLE IF NOT EXISTS `Library`.`PhoneNumbers` (
+  `PhoneNumbers` DECIMAL(8,0) NOT NULL,
+  `PublisherID` INT NOT NULL,
+  INDEX `fk_PhoneNumbers_Publisher1_idx` (`PublisherID` ASC),
+  PRIMARY KEY (`PublisherID`, `PhoneNumbers`),
+  CONSTRAINT `fk_PhoneNumbers_Publisher1`
+    FOREIGN KEY (`PublisherID`)
+    REFERENCES `Library`.`Publisher` (`PublisherID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Library`.`ArticleToLoans`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Library`.`ArticleToLoans` ;
+
+CREATE TABLE IF NOT EXISTS `Library`.`ArticleToLoans` (
+  `ArticleID` INT NOT NULL,
+  `LoanID` INT NOT NULL,
+  `ReturnedDate` DATE NULL,
+  INDEX `fk_ArticleToLoans_Article1_idx` (`ArticleID` ASC),
+  INDEX `fk_ArticleToLoans_Loans1_idx` (`LoanID` ASC),
+  CONSTRAINT `fk_ArticleToLoans_Article1`
+    FOREIGN KEY (`ArticleID`)
+    REFERENCES `Library`.`Article` (`ArticleID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ArticleToLoans_Loans1`
+    FOREIGN KEY (`LoanID`)
+    REFERENCES `Library`.`Loans` (`LoanID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Library`.`Litterature`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Library`.`Litterature` ;
+
+CREATE TABLE IF NOT EXISTS `Library`.`Litterature` (
+  `ISBN` DECIMAL(13,0) NOT NULL,
+  `LiteratureCategory` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`ISBN`),
+  CONSTRAINT `fk_Litterature_Books1`
+    FOREIGN KEY (`ISBN`)
+    REFERENCES `Library`.`Books` (`ISBN`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
