@@ -151,11 +151,85 @@ where BelongsToID = vLibraryID;
 END; //
 DELIMITER ;
 
-call GetLibraryBooks(1002);
+#get librarians that work for a specific library
+DROP PROCEDURE IF EXISTS GetLibrariansWorkingForLibrary;
+DELIMITER //
+CREATE PROCEDURE GetLibrariansWorkingForLibrary
+(IN vLibraryID INT)
+BEGIN
+#(*) filter selected columns so they make more sense
+select * from Librarian
+where LibraryID = vLibraryID;
+END; //
+DELIMITER ;
+
+#get all loaners that currently loan an article from that library
+DROP PROCEDURE IF EXISTS GetLibrarysCurrentlyLoanedOutArticles;
+DELIMITER //
+CREATE PROCEDURE GetLibrarysCurrentlyLoanedOutArticles
+(IN vLibraryID INT)
+BEGIN
+#(*) filter selected columns so they make more sense
+select * from Librarian natural join Loans
+where LibraryID = vLibraryID;
+END; //
+DELIMITER ;
 
 
 
 
-select * from Article;
+
+#--transactions--
+#move article from one library to another
+DROP PROCEDURE IF EXISTS ChangeArticleOwnerLibrary;
+DELIMITER //
+CREATE PROCEDURE ChangeArticleOwnerLibrary
+(IN vArticleID INT ,IN vnewOwnerLibraryID INT)
+BEGIN
+declare newLibraryID INT default NULL;
+#need to fix that the below line doesnt' work properly
+#SET TRANSACTION READ WRITE;
+start transaction;
+update Article set BelongsToID = vnewOwnerLibraryID where ArticleID = vArticleID;
+
+#verify that the value changed
+set newLibraryID = (select BelongsToID from Article where ArticleID = vArticleID);
+if newLibraryID = vnewOwnerLibraryID then
+	commit;
+else
+	rollback;
+end if;
+END; //
+DELIMITER ;
+
+#move librarian from one library to another
+DROP PROCEDURE IF EXISTS ChangeLibrarianWorkLibrary;
+DELIMITER //
+CREATE PROCEDURE ChangeLibrarianWorkLibrary
+(IN vLibrarianID INT ,IN vnewOwnerLibraryID INT)
+BEGIN
+declare newLibraryID INT default NULL;
+#need to fix that the below line doesnt' work properly
+#SET TRANSACTION READ WRITE;
+start transaction;
+update Librarian set LibraryID = vnewOwnerLibraryID where LibrarianID = vLibrarianID;
+
+#verify that the value changed
+set newLibraryID = (select LibraryID from Librarian where LibrarianID = vLibrarianID);
+if newLibraryID = vnewOwnerLibraryID then
+	commit;
+else
+	rollback;
+end if;
+END; //
+DELIMITER ;
+
+
+call ChangeLibrarianWorkLibrary(4001, 1001);
+
+
+
+
+select * from Librarian;
 
 

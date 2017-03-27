@@ -13,8 +13,8 @@
 		#get all articles a librarian has loaned out -- GetLibrarianLoanedOutArticlesHistory
     #--library--
 		#get a librarys books -- GetLibraryBooks
-		#get librarians that work for a specific library
-        #get all loaners that currently loan an article from that library
+		#get librarians that work for a specific library -- GetLibrariansWorkingForLibrary
+        #get all loaners that currently loan an article from that library -- GetLibrarysCurrentlyLoanedOutArticles
     #--book--
 		#create new book -- CreateBook
 	#--article--
@@ -22,8 +22,8 @@
     
         
 #--transactions--
-	#move article from one library to another
-	#move librarian from one libraryto another
+	#move article from one library to another -- ChangeArticleOwnerLibrary
+	#move librarian from one library to another -- ChangeLibrarianWorkLibrary
 
         
 #--triggers--
