@@ -224,13 +224,15 @@ end if;
 END; //
 DELIMITER ;
 
+DROP FUNCTION IF EXISTS ConcatName;
 DELIMITER //
-CREATE FUNCTION DeptInstCount (vFirstName VARCHAR(45), vMiddleName VARCHAR(45), vLastName VARCHAR(45))
+CREATE FUNCTION ConcatName (vFirstName VARCHAR(45), vMiddleName VARCHAR(45), vLastName VARCHAR(45))
 RETURNS VARCHAR(140)
 BEGIN
 RETURN CONCAT(COALESCE(vFirstName,''),' ',COALESCE(vMiddleName,''),' ',COALESCE(vLastName,''));
 END; //
 DELIMITER ;
+
 
 
 
