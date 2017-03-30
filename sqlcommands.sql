@@ -8,8 +8,6 @@ Use library;
 #return article that a loaner loaned
 #CAN'T BE DONE YET BECAUSE LOAN NEEDS TO BE VERIFIED TO WORK CORRECTLY
 
-select * from Article;
-
 
 #(*) need more test data so this one can be tested
 #get the articles that a loaner is currently borrowing
@@ -182,11 +180,11 @@ DELIMITER ;
 
 
 
-call ChangeLibrarianWorkLibrary(4001, 1001);
+#call ChangeLibrarianWorkLibrary(4001, 1001);
 
 
 
 
-select * from Librarian;
+#select * from Librarian;
 
 
