@@ -251,7 +251,6 @@ ENGINE = InnoDB;
 -- Table `Library`.`PhoneNumbers`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Library`.`PhoneNumbers` ;
-
 CREATE TABLE IF NOT EXISTS `Library`.`PhoneNumbers` (
   `PhoneNumbers` DECIMAL(8,0) NOT NULL,
   `PublisherID` INT NOT NULL,
@@ -269,7 +268,6 @@ ENGINE = InnoDB;
 -- Table `Library`.`ArticleToLoans`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Library`.`ArticleToLoans` ;
-
 CREATE TABLE IF NOT EXISTS `Library`.`ArticleToLoans` (
   `ArticleID` INT NOT NULL,
   `LoanID` INT NOT NULL,
@@ -293,7 +291,6 @@ ENGINE = InnoDB;
 -- Table `Library`.`Litterature`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Library`.`Litterature` ;
-
 CREATE TABLE IF NOT EXISTS `Library`.`Litterature` (
   `ISBN` DECIMAL(13,0) NOT NULL,
   `LiteratureCategory` VARCHAR(45) NOT NULL,

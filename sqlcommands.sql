@@ -16,11 +16,12 @@ DELIMITER //
 CREATE PROCEDURE GetCurrentBooksLoanedByLoaner
 (IN vLoanerID INT)
 BEGIN
-#(*) filter selected columns so they make more sense
-select * from Loaners natural join Loans
-where LoanerID = vLoanerID AND PeriodEnd = NULL;
+select * from ((Loans natural join ArticleToLoans) natural join Article) natural join Books
+where LoanerID = vLoanerID AND ReturnedDate is NULL;
 END; //
 DELIMITER ;
+
+call GetCurrentBooksLoanedByLoaner(5004);
 
 #get a loaners loaning history
 DROP PROCEDURE IF EXISTS GetLoanerHistory;
