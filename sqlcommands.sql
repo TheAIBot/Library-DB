@@ -16,12 +16,11 @@ DELIMITER //
 CREATE PROCEDURE GetCurrentBooksLoanedByLoaner
 (IN vLoanerID INT)
 BEGIN
-select * from ((Loans natural join ArticleToLoans) natural join Article) natural join Books
+select Books.* from ((Loans natural join ArticleToLoans) natural join Article) natural join Books
 where LoanerID = vLoanerID AND ReturnedDate is NULL;
 END; //
 DELIMITER ;
-
-call GetCurrentBooksLoanedByLoaner(5004);
+#call GetCurrentBooksLoanedByLoaner(5004);
 
 #get a loaners loaning history
 DROP PROCEDURE IF EXISTS GetLoanerHistory;
@@ -29,11 +28,11 @@ DELIMITER //
 CREATE PROCEDURE GetLoanerHistory
 (IN vLoanerID INT)
 BEGIN
-#(*) filter selected columns so they make more sense
-select * from Loaners natural join Loans
+select * from Loans
 where LoanerID = vLoanerID;
 END; //
 DELIMITER ;
+#call GetLoanerHistory(5001);
 
 #(*) for some reason this one doesn't seem to work
 #get all loans that a loaner returned on time
@@ -42,11 +41,11 @@ DELIMITER //
 CREATE PROCEDURE GetLoanersArticlesReturnedOnTime
 (IN vLoanerID INT)
 BEGIN
-#(*) filter selected columns so they make more sense
-select * from Loaners natural join Loans
-where LoanerID = vLoanerID AND DATE(PeriodEnd) != NULL AND DATE(PeriodEnd) <= DATE(ReturnDate);
+select Article.* from (ArticleToLoans natural join Loans) natural join Article
+where LoanerID = vLoanerID AND DATE(ReturnedDate) is not NULL AND DATE(PeriodEnd) >= DATE(ReturnedDate);
 END; //
 DELIMITER ;
+#call GetLoanersArticlesReturnedOnTime(5001);
 
 #get all loans that a loaner returned too late
 DROP PROCEDURE IF EXISTS GetLoanersArticlesReturnedTooLate;
@@ -54,11 +53,11 @@ DELIMITER //
 CREATE PROCEDURE GetLoanersArticlesReturnedTooLate
 (IN vLoanerID INT)
 BEGIN
-#(*) filter selected columns so they make more sense
-select * from Loaners natural join Loans
-where LoanerID = vLoanerID AND ((DATE(PeriodEnd) = NULL AND DATE(ReturnDate) > CURDATE()) OR DATE(PeriodEnd) > DATE(ReturnDate));
+select Article.* from (ArticleToLoans natural join Loans) natural join Article
+where LoanerID = vLoanerID AND ((DATE(ReturnedDate) is NULL AND DATE(PeriodEnd) > CURDATE()) OR (DATE(ReturnedDate) is not NULL AND DATE(PeriodEnd) < DATE(ReturnedDate)));
 END; //
 DELIMITER ;
+#call GetLoanersArticlesReturnedTooLate(5002);
 
 #get all articles that a librarian is currently resposible for
 DROP PROCEDURE IF EXISTS GetLibrarianArticlesResponsibleFor;
@@ -66,11 +65,11 @@ DELIMITER //
 CREATE PROCEDURE GetLibrarianArticlesResponsibleFor
 (IN vLibrarianID INT)
 BEGIN
-#(*) filter selected columns so they make more sense
-select * from Loans
-where LibrarianID = vLibrarianID AND PeriodEnd = NULL;
+select Article.* from (ArticleToLoans natural join Loans) natural join Article
+where LibrarianID = vLibrarianID AND ReturnedDate is null;
 END; //
 DELIMITER ;
+#call GetLibrarianArticlesResponsibleFor(4003);
 
 #get all articles a librarian has loaned out
 DROP PROCEDURE IF EXISTS GetLibrarianLoanedOutArticlesHistory;
@@ -78,11 +77,11 @@ DELIMITER //
 CREATE PROCEDURE GetLibrarianLoanedOutArticlesHistory
 (IN vLibrarianID INT)
 BEGIN
-#(*) filter selected columns so they make more sense
-select * from Loans
+select Article.* from (ArticleToLoans natural join Loans) natural join Article
 where LibrarianID = vLibrarianID;
 END; //
 DELIMITER ;
+#call GetLibrarianLoanedOutArticlesHistory(4003);
 
 #get a librarys books
 DROP PROCEDURE IF EXISTS GetLibraryBooks;
@@ -95,6 +94,7 @@ select * from Article
 where BelongsToID = vLibraryID;
 END; //
 DELIMITER ;
+#call GetLibraryBooks(1001);
 
 #get librarians that work for a specific library
 DROP PROCEDURE IF EXISTS GetLibrariansWorkingForLibrary;
@@ -102,11 +102,11 @@ DELIMITER //
 CREATE PROCEDURE GetLibrariansWorkingForLibrary
 (IN vLibraryID INT)
 BEGIN
-#(*) filter selected columns so they make more sense
 select * from Librarian
 where LibraryID = vLibraryID;
 END; //
 DELIMITER ;
+#call GetLibrariansWorkingForLibrary(1001);
 
 #get all loaners that currently loan an article from that library
 DROP PROCEDURE IF EXISTS GetLibrarysCurrentlyLoanedOutArticles;
@@ -114,11 +114,11 @@ DELIMITER //
 CREATE PROCEDURE GetLibrarysCurrentlyLoanedOutArticles
 (IN vLibraryID INT)
 BEGIN
-#(*) filter selected columns so they make more sense
-select * from Librarian natural join Loans
-where LibraryID = vLibraryID;
+select Article.* from (ArticleToLoans natural join Loans) natural join Article
+where BelongsToID = vLibraryID AND ReturnedDate is null;
 END; //
 DELIMITER ;
+#call GetLibrarysCurrentlyLoanedOutArticles(1002);
 
 
 
@@ -146,6 +146,7 @@ else
 end if;
 END; //
 DELIMITER ;
+#call ChangeLibrarianWorkLibrary(3130, 1001);
 
 #move librarian from one library to another
 DROP PROCEDURE IF EXISTS ChangeLibrarianWorkLibrary;
@@ -168,6 +169,10 @@ else
 end if;
 END; //
 DELIMITER ;
+#call ChangeLibrarianWorkLibrary(4001, 1001);
+
+
+
 
 DROP FUNCTION IF EXISTS ConcatName;
 DELIMITER //
@@ -178,10 +183,6 @@ RETURN CONCAT(COALESCE(vFirstName,''),' ',COALESCE(CONCAT(vMiddleName, ' '), '')
 END; //
 DELIMITER ;
 
-
-
-
-#call ChangeLibrarianWorkLibrary(4001, 1001);
 
 
 
