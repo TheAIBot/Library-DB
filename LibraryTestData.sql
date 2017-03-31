@@ -16,6 +16,7 @@ insert into `publisher` values
 (2003,'Awesome Forlaget','Rytterkær','139',2765,'666');
 
 /*Test data for Books */
+#(*) FIX ISBN VALUES
 insert into `books` values 
 (1000743468643,2001,'2003-07-07','Crazy Horse and Custer',000300.00),
 (1000863668841,2002,'1989-07-07','Solitons in Optical fibers',000700.00),

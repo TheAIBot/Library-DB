@@ -173,7 +173,7 @@ DELIMITER ;
 
 
 
-
+#--functions--
 DROP FUNCTION IF EXISTS ConcatName;
 DELIMITER //
 CREATE FUNCTION ConcatName (vFirstName VARCHAR(45), vMiddleName VARCHAR(45), vLastName VARCHAR(45))
@@ -185,8 +185,85 @@ DELIMITER ;
 
 
 
+#--triggers--
+#verify ISBN before inserting it
+DROP TRIGGER IF EXISTS Books_Before_Insert;
+DELIMITER //
+CREATE TRIGGER Books_Before_Insert
+BEFORE INSERT ON Books FOR EACH ROW
+BEGIN
+DECLARE ISBNString CHAR(13);
+DECLARE d1 INT;
+DECLARE d2 INT;
+DECLARE d3 INT;
+DECLARE d4 INT;
+DECLARE d5 INT;
+DECLARE d6 INT;
+DECLARE d7 INT;
+DECLARE d8 INT;
+DECLARE d9 INT;
+DECLARE d10 INT;
+DECLARE d11 INT;
+DECLARE d12 INT;
+DECLARE d13 INT;
+DECLARE ISBNSum INT;
 
+set ISBNString = CAST(New.ISBN AS CHAR);
 
-#select * from Librarian;
+#get every digit in ISBN
+SET d1  = CONVERT((SUBSTRING(ISBNString,  1, 1)), SIGNED INTEGER);
+SET d2  = CONVERT((SUBSTRING(ISBNString,  2, 1)), SIGNED INTEGER);
+SET d3  = CONVERT((SUBSTRING(ISBNString,  3, 1)), SIGNED INTEGER);
+SET d4  = CONVERT((SUBSTRING(ISBNString,  4, 1)), SIGNED INTEGER);
+SET d5  = CONVERT((SUBSTRING(ISBNString,  5, 1)), SIGNED INTEGER);
+SET d6  = CONVERT((SUBSTRING(ISBNString,  6, 1)), SIGNED INTEGER);
+SET d7  = CONVERT((SUBSTRING(ISBNString,  7, 1)), SIGNED INTEGER);
+SET d8  = CONVERT((SUBSTRING(ISBNString,  8, 1)), SIGNED INTEGER);
+SET d9  = CONVERT((SUBSTRING(ISBNString,  9, 1)), SIGNED INTEGER);
+SET d10 = CONVERT((SUBSTRING(ISBNString, 10, 1)), SIGNED INTEGER);
+SET d11 = CONVERT((SUBSTRING(ISBNString, 11, 1)), SIGNED INTEGER);
+SET d12 = CONVERT((SUBSTRING(ISBNString, 12, 1)), SIGNED INTEGER);
+SET d13 = CONVERT((SUBSTRING(ISBNString, 13, 1)), SIGNED INTEGER);
+
+SET ISBNSum = d1 + 3 * d2 + d3 + 3 * d4 + d5 + 3 * d6 + d7 + 3 * d8 + d9 + 3 * d10 + d11 + 3 * d12 + d13;
+
+IF MOD(ISBNSum, 10) <> 0 THEN SIGNAL SQLSTATE 'HY000'
+	SET MYSQL_ERRNO = 1525, MESSAGE_TEXT = 'Invalid ISBN';
+END IF;
+END; //
+DELIMITER ;
+
+#verify ReturnedDate
+#(*) can't test before isbn values are fixed
+DROP TRIGGER IF EXISTS ArticleToLoans_Before_Update;
+DELIMITER //
+CREATE TRIGGER ArticleToLoans_Before_Update
+BEFORE UPDATE ON ArticleToLoans FOR EACH ROW
+BEGIN
+DECLARE periodStart DATE;
+SET periodStart = (select PeriodStart from ArticleToLoans natural join Loans
+				   where LoanID = New.LoanID);
+IF New.ReturnedDate < periodStart THEN SIGNAL SQLSTATE 'HY000'
+	SET MYSQL_ERRNO = 1525, MESSAGE_TEXT = 'The return date can not be before the book was loaned out';
+END IF;
+END; //
+DELIMITER ;
+
+#make sure article isn't already loaned out
+#(*) can't test before isbn values are fixed
+DROP TRIGGER IF EXISTS ArticleToLoans_Before_Insert;
+DELIMITER //
+CREATE TRIGGER ArticleToLoans_Before_Insert
+BEFORE INSERT ON ArticleToLoans FOR EACH ROW
+BEGIN
+DECLARE isAlreadyLoanedOut INT;
+SET periodStart = (select PeriodStart from ArticleToLoans natural join Loans
+				   where LoanID = New.LoanID AND );
+IF New.ReturnedDate < periodStart THEN SIGNAL SQLSTATE 'HY000'
+	SET MYSQL_ERRNO = 1525, MESSAGE_TEXT = 'The return date can not be before the book was loaned out';
+END IF;
+END; //
+DELIMITER ;
+
 
 
