@@ -45,10 +45,11 @@ insert into `writtenby` values (6003,1000777777777);
 insert into `Litterature` values(1000777777777,'Faglitteratur');
 select * from books;
 
+select * from articletoloans;
 /* OBS DELETE BRUGES IKKE LIGE HER IDET VI GERNE VIL BEHOLDE DISSE ARTIKLER TIL ANDRE TING SOM PROCEDURES; VIEWS, osv. */ 
 select * from Article;
 #Delete the article again and look at the number of books that is offered (or at one point has been)
-Delete from Article where ISBN =1000777777777;
+Delete from Article where ArticleID =1000777777777;
 select * from Books;
 
 #Now it's time for a salary raise of 5%, however on person Anders Samsø Birch earns too much
