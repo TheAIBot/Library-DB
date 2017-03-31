@@ -1,79 +1,106 @@
 USE Library;
 
+#TotalLoanInformation:
+SELECT *
+FROM (LoanedBookArticles) NATURAL JOIN Loaners;
+
+
 CREATE VIEW BookArticles AS
 	SELECT *
 	FROM Books NATURAL JOIN Article;
 
+CREATE VIEW LoanedBookArticles AS
+	SELECT *
+	FROM (Loans  NATURAL JOIN ArticleToLoans) NATURAL JOIN BookArticles;
+
 SELECT * FROM BookArticles;
+
+#Check if article is already reserved;
+SELECT PeriodStart, PeriodEnd
+FROM LoanedBookArticles
+WHERE (ReturnedDate IS NULL) AND
+      (ArticleID = 3001);
+
 
 #Find all the books lend out (at any time), by a user with user id 5003, 
 #and gives the period for the loan. This sorted by the loans start date:
-SELECT Title, PeriodStart, ReturnDate
-FROM BookArticles NATURAL JOIN Loans
-WHERE LoanerID = 5003
+SELECT Title, PeriodStart, ReturnedDate
+FROM LoanedBookArticles
+WHERE LoanerID = 5001
 ORDER BY PeriodStart;
 
 #Find the count of the total number of books lend out by that user:
-SELECT count(*) AS NumberOfLendBooks
-FROM BookArticles NATURAL JOIN Loans
+SELECT COUNT(*) AS NumberOfLendBooks
+FROM LoanedBookArticles
 WHERE LoanerID = 5003;
 
 #Finds all the loaners that currently have a book that is overdue.
 #Selects the Loaners name and ID, and the articles ID as well as the books title.
-SELECT LoanerID, CONCAT(FirstName, " ", MiddleName, " ", LastName) as LoanerName, ArticleID, Title
-FROM (BookArticles NATURAL JOIN Loans) NATURAL JOIN Loaners
-WHERE PeriodEnd < CURDATE() AND ReturnDate IS NULL
+SELECT LoanerID, ConcatName(FirstName, MiddleName, LastName) as LoanerName, ArticleID, Title
+FROM (LoanedBookArticles) NATURAL JOIN Loaners
+WHERE PeriodEnd < CURDATE() AND ReturnedDate IS NULL
 ORDER BY LoanerName;
-
-
 
 #Find all articles that is lend out at a given date, with their title and who have lent it, 
 #at a given date, here taken as'2017-02-25':
 SELECT Title, ArticleID, LoanerID
-FROM BookArticles NATURAL JOIN Loans
-WHERE (('2017-02-20' BETWEEN PeriodStart AND ReturnDate) AND ReturnDate IS NOT NULL) OR  # In the case that it haven't been returned yet.
-	  ((PeriodStart <= '2017-02-20' ) AND ReturnDate IS NULL)
+FROM LoanedBookArticles
+WHERE (('2017-02-20' BETWEEN PeriodStart AND ReturnedDate) AND ReturnedDate IS NOT NULL) OR  # In the case that it haven't been returned yet.
+	  ((PeriodStart <= '2017-02-20' ) AND ReturnedDate IS NULL)
 ORDER BY Title;
 
-
+SELECT * FROM BookArticles;
 #A variant of the query above: 
 #Gives the count of the number of a given book that is lend out at a given date:
-SELECT Title, ISBN, SUM(IF(('2017-02-20' BETWEEN PeriodStart and ReturnDate) OR  # In the case that it haven't been returned yet.
-						   ((PeriodStart <= '2017-02-20' ) AND ReturnDate IS NULL),1,0)) AS NumberLendOut #All the books that have been lend out in the period
-FROM BookArticles NATURAL LEFT OUTER JOIN Loans
+SELECT Title, ISBN, SUM(IF(('2017-02-20' BETWEEN PeriodStart and ReturnedDate) OR  # In the case that it haven't been returned yet.
+					   ((PeriodStart <= '2017-02-20' ) AND ReturnedDate IS NULL),1,0)) AS NumberLendOut #All the books that have been lend out in the period
+FROM BookArticles NATURAL LEFT OUTER JOIN (Loans NATURAL JOIN ArticleToLoans)
 GROUP BY ISBN
 ORDER BY Title;
 
-#Tests:
-SELECT * FROM Loans;
-SELECT Title, ISBN, PeriodStart, IF( ('2017-02-20' BETWEEN PeriodStart and ReturnDate) OR ((PeriodStart <= '2017-02-20' ) AND ReturnDate IS NULL),1,0) AS M
-FROM BookArticles NATURAL LEFT OUTER JOIN Loans;
-      
-
-
-Select * from Loans NATURAL JOIN Loaners;
-
 #Gives a sorted list of loaners by there name, 
 #and how many books they have loaned out throughout the years:
-SELECT CONCAT(FirstName, ", ", LastName) AS LoanerName, count(*) AS LoanCount
-FROM Loaners NATURAL JOIN Loans #For every loaner, one gets the loan of a book.
+SELECT ConcatName(FirstName, MiddleName, LastName) AS LoanerName, count(*) AS LoanCount
+FROM LoanedBookArticles NATURAL JOIN Loaners #For every loaner and loan, one gets the loaners loan of a book.
 GROUP BY LoanerID #
 ORDER BY LoanCount;
 
-#Find all the books (name) written by an auther an auther with a given name, here "Jueles verne"(*)
+#Finds the users that have lent the largest number of books over the years:
+
+SELECT LoanerName, LoanerID, LentCount
+FROM  (SELECT ConcatName(FirstName, MiddleName, LastName) AS LoanerName, LoanerID, COUNT(*) AS LentCount
+	   FROM LoanedBookArticles NATURAL JOIN Loaners #For every loaner and loan, one gets the loaners loan of a book.
+	   GROUP BY LoanerID #
+       ORDER BY LentCount) AS LoanerWithCount,
+	  (SELECT MAX(LentCount) AS MaxLent
+       FROM (SELECT COUNT(*) AS LentCount
+		     FROM LoanedBookArticles
+             GROUP BY LoanerID
+		     ORDER BY LentCount) AS numberOfLentBooks) AS MaxLentCount
+WHERE LoanerWithCount.LentCount = MaxLentCount.MaxLent
+GROUP BY LoanerID;
+
+SELECT MAX(MAX_LOAN_COUNT)
+FROM (SELECT count(*) AS MAX_LOAN_COUNT, LoanerID
+	  FROM LoanedBookArticles NATURAL JOIN Loaners #For every loaner and loan, one gets the loaners loan of a book.
+	  GROUP BY LoanerID #
+	  ORDER BY MAX_LOAN_COUNT) AS kage;
+
+#Find all the books (name) written by an auther an auther with a given name, here "Jesper Samsø Birch"(*)
 #Also gives the auther name, in the case that there are more authers with the same name
-SELECT CONCAT(Authers.FirstName, ' ', Authers.MiddleName, ' ', Authers.LastName) AS AutherName, AuthersID, Title 
+SELECT ConcatName(Authers.FirstName, Authers.MiddleName, Authers.LastName) AS AutherName, AuthersID, Title 
 FROM (Books NATURAL JOIN WrittenBy) NATURAL JOIN Authers
-WHERE CONCAT(Authers.FirstName, ' ', Authers.MiddleName, ' ', Authers.LastName) = 'Jesper Samsø Birch'; 
+WHERE ConcatName(Authers.FirstName, Authers.MiddleName, Authers.LastName) = 'Jesper Samsø Birch'; 
 	#Can't reference AutherName, as it is an alias.
 #(*) Write function for getting the autherName
 
 
 #Find all the authers that a certain person has lend books from.
-SELECT DISTINCT CONCAT(Authers.FirstName, ' ', Authers.MiddleName, ' ', Authers.LastName) AS AutherName, AuthersID
+SELECT DISTINCT ConcatName(Authers.FirstName, Authers.MiddleName,  Authers.LastName) AS AutherName, AuthersID
 FROM  (SELECT ISBN 
-	   FROM (Loaners NATURAL JOIN Loans) NATURAL JOIN Article
-       WHERE Loaners.FirstName = "Terkel") AS readBooks, #Splitting it up, for better readability.
+	   FROM Loaners NATURAL JOIN LoanedBookArticles
+       WHERE ConcatName(Loaners.FirstName, Loaners.MiddleName,Loaners.LastName) =
+       'Terkel Stenstrøm Hansen') AS readBooks, #Splitting it up, for better readability.
       (Books NATURAL JOIN WrittenBy) NATURAL JOIN Authers
 WHERE (Books.ISBN = readBooks.ISBN);
 
@@ -85,6 +112,28 @@ WHERE LibraryID = 1001 AND PlacementID != 1001
 ORDER BY Title;
 
 SELECT * FROM Article;
+
+#Division: Finding all the loaners that have lent all the works of a given author, here the one with autherID = 6001
+#(*) Skal der en distinct til?
+SELECT LoanerID
+FROM (SELECT ISBN FROM WrittenBy WHERE AuthersID = 6001) AS AuthersBooks, #(*) IS distinct neccesary?
+	 (SELECT DISTINCT LoanerID,ISBN FROM LoanedBookArticles NATURAL JOIN WrittenBy) AS ReadBooksByAuthors
+WHERE ReadBooksByAuthors.ISBN = AuthersBooks.ISBN
+GROUP BY LoanerID 
+HAVING COUNT(ReadBooksByAuthors.ISBN) = COUNT(AuthersBooks.ISBN);
+       
+       
+SELECT FirstName, Title FROM Loaners NATURAL JOIN LoanedBookArticles ORDER BY FirstName;
+
+#Can't use the vode below, as the count taken to the right isn't allowed. 
+#Moreover, the select in ReadBooksWIthAuthers is neccesary to be able to rename it for some reason(*)
+#And for some reason i can't use the renamed table in the HAVIN clause.
+SELECT *
+FROM (SELECT * FROM WrittenBy WHERE AuthersID = 6001) AS AuthersBooks, 
+	 (SELECT * FROM LoanedBookArticles NATURAL JOIN WrittenBy) AS ReadBooksWithAuthers
+WHERE ReadBooksWithAuthers.ISBN = AuthersBooks.ISBN
+GROUP BY LoanerID 
+HAVING COUNT(ReadBooksWithAuthers.ISBN) = (SELECT COUNT(ISBN) FROM AuthersBooks);
 
 #Lav noget natural left outer join (*)
 #(*) Læs op på cascade
