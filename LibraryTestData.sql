@@ -14,14 +14,10 @@ insert into `Publisher` values (2001,'Matematik Forlaget','78Q','Matricevej',999
 (2003,'Awesome Forlaget','Rytterkær','139',2765,'666');
 
 /*Test data for Books */
-insert into `Books` values (1000743468643,2001,'2003-07-07','Crazy Horse and Custer',000300.00),
-(1000863668841,2002,'1989-07-07','Solitons in Optical fibers',000700.00),
-(1001234567123,2003,'2015-03-02','Livet som Jesper',000666.00);
+insert into `Books` values (1000743468643,2001,'2003-07-07','Crazy Horse and Custer',000300.00,'Faglitteratur'),
+(1000863668841,2002,'1989-07-07','Solitons in Optical fibers',000700.00,'Faglitteratur'),
+(1001234567123,2003,'2015-03-02','Livet som Jesper',000666.00,'Awesomelitteratur');
 
-/* Test data for Litterature*/
-insert into `Litterature` values(1000743468643,'Faglitteratur'),
-(1000863668841,'Faglitteratur'),
-(1001234567123,'Awesomelitteratur');
 
 /*Test data for Article */
 #id starts at 3000
