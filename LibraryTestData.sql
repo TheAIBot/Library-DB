@@ -9,9 +9,9 @@ insert into `Libraries` values (1001,'Egedal Bibliotek','34H',3850,'Træhusevej'
 
 /* Test data for publisher*/
 #id starts at 2000
-insert into `Publisher` values (2001,'Matematik Forlaget','78Q','Matricevej',9999,NULL),
-(2002,'Computer Forlaget','13A','Databasevej',5555, NULL),
-(2003,'Awesome Forlaget','Rytterkær','139',2765,'666');
+insert into `Publisher` values (2001,'Matematik Forlaget','78Q','Matricevej',9999),
+(2002,'Computer Forlaget','13A','Databasevej',5555),
+(2003,'Awesome Forlaget','Rytterkær','139',2765);
 
 /*Test data for Books */  
 insert into `Books` values (9781861978769,2001,'2003-07-07','Crazy Horse and Custer',000300.00,'Faglitteratur'),
