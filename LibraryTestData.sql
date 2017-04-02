@@ -125,32 +125,55 @@ insert into `PhoneNumbers` values
 
 
 drop procedure if exists addBook;
-delimiter //
-create procedure addBook(Visbn decimal(13,0),VPublisherID INT, VDatePublish DATE, VTitle varchar(45), VPrice DECIMAL(6,2), VArticleID INT, VDateBought DATE, VPlacementID int, VBelongsToID int, VAuthersID int, Vcategory varchar(45))
-begin 
-declare ISBNtester decimal(13,0);
+DELIMITER //
+CREATE procedure addBook(Visbn        DECIMAL(13,0),
+                         VPublisherID INT, 
+                         VDatePublish DATE,
+                         VTitle       VARCHAR(45), 
+                         VPrice       DECIMAL(6,2), 
+                         VArticleID   INT, 
+                         VDateBought  DATE, 
+                         VPlacementID INT, 
+                         VBelongsToID INT, 
+                         VAuthersID   INT, 
+                         Vcategory    VARCHAR(45))
+BEGIN 
+DECLARE ISBNtester DECIMAL(13,0);
 
-start transaction;
-insert into `books` values (Visbn,VPublisherID,VDatePublish,VTitle,VPrice, Vcategory);
-insert into `article` values (VArticleID,VDateBought,VPlacementID,VBelongsToID,Visbn);
-insert into `writtenby` values (VAuthersID,Visbn);
+START TRANSACTION;
+INSERT INTO `books`     VALUES (Visbn,
+                                VPublisherID,
+                                VDatePublish,
+                                VTitle,
+                                VPrice, 
+                                Vcategory);
+INSERT INTO `article`   VALUES (VArticleID,
+                                VDateBought,
+                                VPlacementID,
+                                VBelongsToID,
+                                Visbn);
+INSERT INTO `writtenby` VALUES (VAuthersID,
+                                Visbn);
 
-set ISBNtester = (select ISBN from books where books.ISBN=Visbn);
-if ISBNtester != Visbn then
+SET ISBNtester = (SELECT ISBN FROM books 
+                  WHERE books.ISBN=Visbn);
+IF ISBNtester != Visbn THEN
 	rollback;
-end if;
-set ISBNtester = (select ISBN from article where article.ISBN=Visbn);
-if ISBNtester != Visbn then
+END IF;
+SET ISBNtester = (SELECT ISBN FROM article 
+                  WHERE article.ISBN=Visbn);
+IF ISBNtester != Visbn THEN
 	rollback;
-end if;
-set ISBNtester = (select ISBN from writtenby where writtenby.ISBN=Visbn);
-if ISBNtester != Visbn then
+END IF;
+SET ISBNtester = (SELECT ISBN FROM writtenby 
+                  WHERE writtenby.ISBN=Visbn);
+IF ISBNtester != Visbn THEN
 	rollback;
-end if;
-commit;
+END IF;
+COMMIT;
 
-end; //
-delimiter ;
+END; //
+DELIMITER ;
 
 
 #create books and articles for all things J.R.R. Tolkien

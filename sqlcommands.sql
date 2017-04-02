@@ -131,21 +131,21 @@ DELIMITER //
 CREATE PROCEDURE ChangeArticleOwnerLibrary
 (IN vArticleID INT ,IN vnewOwnerLibraryID INT)
 BEGIN
-declare newLibraryID INT default NULL;
-#need to fix that the below line doesnt' work properly
-#SET TRANSACTION READ WRITE;
-start transaction;
-update Article set BelongsToID = vnewOwnerLibraryID where ArticleID = vArticleID;
+DECLARE newLibraryID INT DEFAULT NULL;
+START TRANSACTION;
+UPDATE Article SET BelongsToID = vnewOwnerLibraryID 
+               WHERE ArticleID = vArticleID;
 
 #verify that the value changed
-set newLibraryID = (select BelongsToID from Article where ArticleID = vArticleID);
-if newLibraryID = vnewOwnerLibraryID then
-	commit;
-else
-	rollback;
-end if;
+SET newLibraryID = (SELECT BelongsToID FROM Article 
+                    WHERE ArticleID = vArticleID);
+IF newLibraryID = vnewOwnerLibraryID THEN
+	COMMIT;
+ELSE
+	ROLLBACK;
+END IF;
 END; //
-DELIMITER ;
+DELIMITER ;  
 #call ChangeLibrarianWorkLibrary(3130, 1001);
 
 #move librarian from one library to another
@@ -154,19 +154,17 @@ DELIMITER //
 CREATE PROCEDURE ChangeLibrarianWorkLibrary
 (IN vLibrarianID INT ,IN vnewOwnerLibraryID INT)
 BEGIN
-declare newLibraryID INT default NULL;
-#need to fix that the below line doesnt' work properly
-#SET TRANSACTION READ WRITE;
-start transaction;
-update Librarian set LibraryID = vnewOwnerLibraryID where LibrarianID = vLibrarianID;
+DECLARE newLibraryID INT DEFAULT NULL;
+START TRANSACTION;
+UPDATE Librarian SET LibraryID = vnewOwnerLibraryID WHERE LibrarianID = vLibrarianID;
 
 #verify that the value changed
-set newLibraryID = (select LibraryID from Librarian where LibrarianID = vLibrarianID);
-if newLibraryID = vnewOwnerLibraryID then
-	commit;
-else
-	rollback;
-end if;
+SET newLibraryID = (SELECT LibraryID FROM Librarian WHERE LibrarianID = vLibrarianID);
+IF newLibraryID = vnewOwnerLibraryID THEN
+	COMMIT;
+ELSE
+	ROLLBACK;
+END IF;
 END; //
 DELIMITER ;
 #call ChangeLibrarianWorkLibrary(4001, 1001);
@@ -208,7 +206,13 @@ DECLARE d12 INT;
 DECLARE d13 INT;
 DECLARE ISBNSum INT;
 
+
+
 set ISBNString = CAST(New.ISBN AS CHAR);
+
+IF CHAR_LENGTH(ISBNString) != 13 THEN SIGNAL SQLSTATE 'HY000'
+	SET MYSQL_ERRNO = 1525, MESSAGE_TEXT = 'Invalid ISBN';
+END IF;
 
 #get every digit in ISBN
 SET d1  = CONVERT((SUBSTRING(ISBNString,  1, 1)), SIGNED INTEGER);
