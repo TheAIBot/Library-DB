@@ -10,10 +10,9 @@ begin
 declare ISBNtester decimal(13,0);
 
 start transaction;
-insert into `books` values (Visbn,VPublisherID,VDatePublish,VTitle,VPrice);
+insert into `books` values (Visbn,VPublisherID,VDatePublish,VTitle,VPrice,Vcategory);
 insert into `article` values (VArticleID,VDateBought,VPlacementID,VBelongsToID,Visbn);
 insert into `writtenby` values (VAuthersID,Visbn);
-insert into `Litterature` values(Visbn,Vcategory);
 
 set ISBNtester = (select ISBN from books where books.ISBN=Visbn);
 if ISBNtester != (Visbn) then
@@ -27,10 +26,6 @@ set ISBNtester = (select ISBN from writtenby where writtenby.ISBN=Visbn);
 if ISBNtester != (Visbn) then
 	rollback;
 end if;
-set ISBNtester = (select ISBN from Litterature where Litterature.ISBN=Visbn);
-if ISBNtester != (Visbn) then
-	rollback;
-end if;
 commit;
 
 end; //
@@ -39,10 +34,9 @@ delimiter ;
 #Create a new book with the exsisting auther with id 2003
 #Show all possible articles
 call addBook(1000777777777,2003,'2007-05-22','Ebert and his errors',000180.00,3011,'2008-04-28',1003,1003,6003,'Faglitteratur');
-insert into `books` values (1000777777777,2003,'2007-05-22','Ebert and his errors',000180.00);
+insert into `books` values (1000777777777,2003,'2007-05-22','Ebert and his errors',000180.00,'Faglitteratur');
 insert into `article` values (3011,'2008-04-28',1003,1003,1000777777777);
 insert into `writtenby` values (6003,1000777777777);
-insert into `Litterature` values(1000777777777,'Faglitteratur');
 select * from books;
 
 select * from articletoloans;
