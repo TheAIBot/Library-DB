@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS `Library`.`Books` (
   `DatePublish` DATE NOT NULL,
   `Title` VARCHAR(45) NOT NULL,
   `Price` DECIMAL(6,2) NOT NULL,
+  `LiteratureCategory` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`ISBN`),
   INDEX `fk_Books_Publisher1_idx` (`PublisherID` ASC),
   CONSTRAINT `fk_Books_Publisher1`
@@ -282,22 +283,6 @@ CREATE TABLE IF NOT EXISTS `Library`.`ArticleToLoans` (
   CONSTRAINT `fk_ArticleToLoans_Loans1`
     FOREIGN KEY (`LoanID`)
     REFERENCES `Library`.`Loans` (`LoanID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Library`.`Litterature`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `Library`.`Litterature` ;
-CREATE TABLE IF NOT EXISTS `Library`.`Litterature` (
-  `ISBN` DECIMAL(13,0) NOT NULL,
-  `LiteratureCategory` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`ISBN`),
-  CONSTRAINT `fk_Litterature_Books1`
-    FOREIGN KEY (`ISBN`)
-    REFERENCES `Library`.`Books` (`ISBN`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

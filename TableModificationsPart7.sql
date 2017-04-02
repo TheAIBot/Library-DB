@@ -4,19 +4,49 @@ Use library;
 
 #make a transaction
 
+<<<<<<< HEAD
+=======
+delimiter //
+create procedure addBook(Visbn decimal(13,0),VPublisherID INT, VDatePublish DATE, VTitle varchar(45),VPrice DECIMAL(6,2),VArticleID INT,VDateBought DATE,VPlacementID int,VBelongsToID int,VAuthersID int,Vcategory varchar(45))
+begin 
+declare ISBNtester decimal(13,0);
+
+start transaction;
+insert into `books` values (Visbn,VPublisherID,VDatePublish,VTitle,VPrice,Vcategory);
+insert into `article` values (VArticleID,VDateBought,VPlacementID,VBelongsToID,Visbn);
+insert into `writtenby` values (VAuthersID,Visbn);
+
+set ISBNtester = (select ISBN from books where books.ISBN=Visbn);
+if ISBNtester != (Visbn) then
+	rollback;
+end if;
+set ISBNtester = (select ISBN from article where article.ISBN=Visbn);
+if ISBNtester != (Visbn) then
+	rollback;
+end if;
+set ISBNtester = (select ISBN from writtenby where writtenby.ISBN=Visbn);
+if ISBNtester != (Visbn) then
+	rollback;
+end if;
+commit;
+
+end; //
+delimiter ;
+
+>>>>>>> refs/remotes/origin/testData
 #Create a new book with the exsisting auther with id 2003
 #Show all possible articles
 call addBook(1000777777777,2003,'2007-05-22','Ebert and his errors',000180.00,3011,'2008-04-28',1003,1003,6003,'Faglitteratur');
-insert into `books` values (1000777777777,2003,'2007-05-22','Ebert and his errors',000180.00);
+insert into `books` values (1000777777777,2003,'2007-05-22','Ebert and his errors',000180.00,'Faglitteratur');
 insert into `article` values (3011,'2008-04-28',1003,1003,1000777777777);
 insert into `writtenby` values (6003,1000777777777);
-insert into `Litterature` values(1000777777777,'Faglitteratur');
 select * from books;
 
+select * from articletoloans;
 /* OBS DELETE BRUGES IKKE LIGE HER IDET VI GERNE VIL BEHOLDE DISSE ARTIKLER TIL ANDRE TING SOM PROCEDURES; VIEWS, osv. */ 
 select * from Article;
 #Delete the article again and look at the number of books that is offered (or at one point has been)
-Delete from Article where ISBN =1000777777777;
+Delete from Article where ArticleID =1000777777777;
 select * from Books;
 
 #Now it's time for a salary raise of 5%, however on person Anders Samsø Birch earns too much
