@@ -10,7 +10,7 @@ insert into `libraries` values
 
 /* Test data for publisher*/
 #id starts at 2000
-insert into `publisher` values 
+insert into `Publisher` values 
 (2001,'Matematik Forlaget','78Q','Matricevej',9999),
 (2002,'Computer Forlaget','13A','Databasevej',5555),
 (2003,'Awesome Forlaget','Rytterkær','139',2765);

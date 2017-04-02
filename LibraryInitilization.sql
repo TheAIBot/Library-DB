@@ -40,7 +40,6 @@ CREATE TABLE IF NOT EXISTS `Library`.`Publisher` (
   `StreetNumber` VARCHAR(45) NOT NULL,
   `StreetName` VARCHAR(45) NOT NULL,
   `ZipCode` VARCHAR(45) NOT NULL,
-  `PhoneNumbers` VARCHAR(45) NULL,
   PRIMARY KEY (`PublisherID`))
 ENGINE = InnoDB;
 
