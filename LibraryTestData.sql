@@ -130,10 +130,9 @@ begin
 declare ISBNtester decimal(13,0);
 
 start transaction;
-insert into `books` values (Visbn,VPublisherID,VDatePublish,VTitle,VPrice);
+insert into `books` values (Visbn,VPublisherID,VDatePublish,VTitle,VPrice, Vcategory);
 insert into `article` values (VArticleID,VDateBought,VPlacementID,VBelongsToID,Visbn);
 insert into `writtenby` values (VAuthersID,Visbn);
-insert into `Litterature` values(Visbn,Vcategory);
 
 set ISBNtester = (select ISBN from books where books.ISBN=Visbn);
 if ISBNtester != Visbn then
@@ -144,10 +143,6 @@ if ISBNtester != Visbn then
 	rollback;
 end if;
 set ISBNtester = (select ISBN from writtenby where writtenby.ISBN=Visbn);
-if ISBNtester != Visbn then
-	rollback;
-end if;
-set ISBNtester = (select ISBN from Litterature where Litterature.ISBN=Visbn);
 if ISBNtester != Visbn then
 	rollback;
 end if;
