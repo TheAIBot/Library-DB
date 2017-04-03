@@ -1,8 +1,8 @@
-Use library;
+Use Library;
 
 /* Test data for libraries*/
 #id starts at 1000
-insert into `libraries` values 
+insert into `Libraries` values 
 (1001,'Egedal Bibliotek','34H',3850,'Træhusevej',40000),
 (1002,'Birkerød Bibliotek','12J',3450,'Træhusevej',12000),
 (1003,'Thisted Bibliotek','42G',7000,'Pipedrejervej',20000);
@@ -40,14 +40,14 @@ insert into `Article` values
 
 /*Test data for Librarian */
 #id starts at 4000
-insert into `librarian` values 
+insert into `Librarian` values 
 (4001,'Beate','Stenstrøm','Habberbug','S69','Edderkoppedal',3850,'1970-08-12',26000,1001,'1995-12-12',null),
 (4002,'Per',null,'Jensen','84V','Saturnvej',3450,'1980-11-01',27000,1002,'2005-12-12',null),
 (4003,'Anders','Samsø','Birch','139','Rytterkær',7000,'1996-03-30',30000,1003,'2016-01-05',null);
 
 /*Test data for Loaners */
 #id starts at 5000
-insert into `loaners` values
+insert into `Loaners` values
 (5001,'Terkel'   , 'Stenstrøm','Hansen'    ,'Edderkoppedal'     ,3850,'S69','2000-02-10'),
 (5002,'Susanne'  , null       ,'Jensen'    ,'Saturnvej'         ,3450,'84V','1981-07-13'),
 (5003,'Legolas'  , 'Den'      ,'Mægtige'   ,'Rytterkær'         ,7000,'139','2018-03-13'),
@@ -66,7 +66,7 @@ insert into `loaners` values
 
 /*Test data for Authers */
 #id starts at 6000
-insert into `authers` values 
+insert into `Authers` values 
 (6001,'Karsten' ,  null   , 'Schmidt' ,'1940-07-26'),
 (6002,'Flemming',  null   , 'Schmidt' ,'1960-05-13'),
 (6003,'Jesper'  , 'Birch' , 'Samsø'   ,'1996-03-30'),
@@ -79,6 +79,7 @@ insert into `WrittenBy` values
 (6002,9783161484100),
 (6003,9780125041904);
 
+DELETE FROM RegisteredAt;
 /*Test data for RegisteredAt */
 insert into `RegisteredAt` values 
 (1001,5001,'2007-04-17'),
@@ -98,18 +99,27 @@ insert into `RegisteredAt` values
 (1002,5015,'2029-10-10');
 
 
+DELETE FROM Loans;
 /*Test data for Loans */
 #id starts at 7000
+/*
 insert into `Loans` values 
 (7001,5001,4001,'2017-02-12','2017-02-26'),
 (7002,5002,4002,'2016-08-01','2016-08-15'),
+(7004,5001,4002,'2017-02-01','2017-06-01'),
 (7003,5003,4003,'2025-09-14','2025-09-28');
-
+*/
+DELETE FROM ArticleToLoans;
 /*Test data for ArticleToLoans */
+/*
 insert into `ArticleToLoans` values 
 (3001,7001,'2017-02-25'),
+(3022,7001,'2017-02-25'),
 (3022,7002,'2016-08-27'),
+(3001,7002,'2016-08-30'),
+(3001,7004,NULL),
 (3072,7003,'2025-09-26');
+*/
 
 /*Test data for LibraryOpeningHours */
 insert into `LibraryOpeningHours` values 
@@ -144,19 +154,19 @@ begin
 declare ISBNtester decimal(13,0);
 
 start transaction;
-insert into `books` values (Visbn,VPublisherID,VDatePublish,VTitle,VPrice, Vcategory);
-insert into `article` values (VArticleID,VDateBought,VPlacementID,VBelongsToID,Visbn);
-insert into `writtenby` values (VAuthersID,Visbn);
+insert into `Books` values (Visbn,VPublisherID,VDatePublish,VTitle,VPrice, Vcategory);
+insert into `Article` values (VArticleID,VDateBought,VPlacementID,VBelongsToID,Visbn);
+insert into `WrittenBy` values (VAuthersID,Visbn);
 
-set ISBNtester = (select ISBN from books where books.ISBN=Visbn);
+set ISBNtester = (select ISBN from Books where Books.ISBN=Visbn);
 if ISBNtester != Visbn then
 	rollback;
 end if;
-set ISBNtester = (select ISBN from article where article.ISBN=Visbn);
+set ISBNtester = (select ISBN from Article where Article.ISBN=Visbn);
 if ISBNtester != Visbn then
 	rollback;
 end if;
-set ISBNtester = (select ISBN from writtenby where writtenby.ISBN=Visbn);
+set ISBNtester = (select ISBN from WrittenBy where WrittenBy.ISBN=Visbn);
 if ISBNtester != Visbn then
 	rollback;
 end if;
@@ -166,7 +176,7 @@ end; //
 delimiter ;
 
 
-#create books and articles for all things J.R.R. Tolkien
+#create Books and articles for all things J.R.R. Tolkien
 call addBook(9780547928210, 2003, '2012-11-6' , 'The Fellowship of the Ring'               , 2.50, 3100, '2012-11-6' , 1001, 1001, 6004, 'Skønlitteratur');
 call addBook(9780547928203, 2003, '2005-2-6'  , 'The Two Towers'                           ,   50, 3101, '2005-2-6'  , 1001, 1001, 6004, 'Skønlitteratur');
 call addBook(9780547928197, 2003, '2017-11-6' , 'The Return of the King'                   , 1337, 3102, '2017-11-6' , 1001, 1001, 6004, 'Skønlitteratur');
