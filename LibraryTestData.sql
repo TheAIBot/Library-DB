@@ -155,19 +155,19 @@ INSERT INTO `article`   VALUES (VArticleID,
 INSERT INTO `writtenby` VALUES (VAuthersID,
                                 Visbn);
 
-SET ISBNtester = (SELECT ISBN FROM books 
+SET ISBNtester = (SELECT ISBN FROM Books 
                   WHERE books.ISBN=Visbn);
-IF ISBNtester != Visbn THEN
+IF ISBNtester IS NULL OR ISBNtester != Visbn THEN
 	rollback;
 END IF;
-SET ISBNtester = (SELECT ISBN FROM article 
+SET ISBNtester = (SELECT ISBN FROM Article 
                   WHERE article.ISBN=Visbn);
-IF ISBNtester != Visbn THEN
+IF ISBNtester IS NULL OR ISBNtester != Visbn THEN
 	rollback;
 END IF;
-SET ISBNtester = (SELECT ISBN FROM writtenby 
+SET ISBNtester = (SELECT ISBN FROM WrittenBy 
                   WHERE writtenby.ISBN=Visbn);
-IF ISBNtester != Visbn THEN
+IF ISBNtester IS NULL OR ISBNtester != Visbn THEN
 	rollback;
 END IF;
 COMMIT;
