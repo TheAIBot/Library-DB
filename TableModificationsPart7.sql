@@ -46,7 +46,7 @@ select * from articletoloans;
 /* OBS DELETE BRUGES IKKE LIGE HER IDET VI GERNE VIL BEHOLDE DISSE ARTIKLER TIL ANDRE TING SOM PROCEDURES; VIEWS, osv. */ 
 select * from Article;
 #Delete the article again and look at the number of books that is offered (or at one point has been)
-Delete from Article where ArticleID =1000777777777;
+Delete from Article where ArticleID =3010;
 select * from Books;
 
 #Now it's time for a salary raise of 5%, however on person Anders Samsø Birch earns too much
@@ -117,24 +117,25 @@ call articleTestDate(3099);
 select * from articletoloans ;
 
 #Title Price and ISBN view
+drop view if exists WrittenbyInfo;
 CREATE view WrittenbyInfo as
 select Title, Price,PublisherID,
-(select ISBN from writtenby where writtenby.ISBN=books.ISBN) as ISBN,
-(select AuthersID from writtenby where Writtenby.ISBN=books.ISBN) as AuthersID
+(select ISBN from WrittenBy where WrittenBy.ISBN=books.ISBN) as ISBN,
+(select AuthersID from WrittenBy where WrittenBy.ISBN=books.ISBN) as AuthersID
 from books;
-select * from WrittenbyInfo;
+select * from WrittenbyInfo limit 10;
 
 #create a view of which books the authers have made, their title and their price
 #Here it should be noted that whenever we use nested query it is basically
 #the same as when using group by (see powp 3, pp57) 
+drop view if exists AutherInfo;
 create view AutherInfo as
 select *,
-(select FirstName from authers where authers.AuthersID=WrittenbyInfo.AuthersID) as FirstName,
-(select MiddleName from authers where authers.AuthersID=WrittenbyInfo.AuthersID) as MiddleName,
-(select LastName from authers where authers.AuthersID=WrittenbyInfo.AuthersID) as LastName
+(select FirstName from authers where Authers.AuthersID=WrittenbyInfo.AuthersID) as FirstName,
+(select MiddleName from authers where Authers.AuthersID=WrittenbyInfo.AuthersID) as MiddleName,
+(select LastName from authers where Authers.AuthersID=WrittenbyInfo.AuthersID) as LastName
 from WrittenbyInfo;
-select * from AutherInfo;
-
+select * from AutherInfo limit 10;
 
 #case with fagliteratur and price of books
 

@@ -233,7 +233,11 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Library`.`LibraryOpeningHours` ;
 CREATE TABLE IF NOT EXISTS `Library`.`LibraryOpeningHours` (
+<<<<<<< HEAD
   `OpeningTime` ENUM('Monday', 'Tuesday', 'Wedensday', 'Thursday', 'Friday', 'Saturday', 'Sunday') NOT NULL,
+=======
+  `OpeningTime` ENUM('Monday', 'Tuesday', 'Wedensday', 'Thursday', 'Friday','Saturday','Sunday') NOT NULL,
+>>>>>>> refs/remotes/origin/master
   `LibraryID` INT NOT NULL,
   `TimeStart` TIME(0) NOT NULL,
   `TimeEnd` TIME(0) NOT NULL,
@@ -290,3 +294,15 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+#Views used in the query's:
+
+
+CREATE VIEW BookArticles AS
+	SELECT *
+	FROM Books NATURAL JOIN Article;
+
+CREATE VIEW LoanedBookArticles AS
+	SELECT *
+	FROM (Loans  NATURAL JOIN ArticleToLoans) NATURAL JOIN BookArticles;
+
