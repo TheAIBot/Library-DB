@@ -16,11 +16,13 @@ DELIMITER //
 CREATE PROCEDURE GetCurrentBooksLoanedByLoaner
 (IN vLoanerID INT)
 BEGIN
-select Books.* from ((Loans natural join ArticleToLoans) natural join Article) natural join Books
-where LoanerID = vLoanerID AND ReturnedDate is NULL;
+SELECT Books.* FROM ((Loans NATURAL JOIN ArticleToLoans) 
+                            NATURAL JOIN Article) 
+                            NATURAL JOIN Books
+WHERE LoanerID = vLoanerID AND ReturnedDate IS NULL;
 END; //
 DELIMITER ;
-#call GetCurrentBooksLoanedByLoaner(5004);
+#CALL GetCurrentBooksLoanedByLoaner(5004);
 
 #get a loaners loaning history
 DROP PROCEDURE IF EXISTS GetLoanerHistory;
@@ -53,11 +55,16 @@ DELIMITER //
 CREATE PROCEDURE GetLoanersArticlesReturnedTooLate
 (IN vLoanerID INT)
 BEGIN
-select Article.* from (ArticleToLoans natural join Loans) natural join Article
-where LoanerID = vLoanerID AND ((DATE(ReturnedDate) is NULL AND DATE(PeriodEnd) > CURDATE()) OR (DATE(ReturnedDate) is not NULL AND DATE(PeriodEnd) < DATE(ReturnedDate)));
+SELECT Article.* FROM (ArticleToLoans NATURAL JOIN Loans) 
+                                      NATURAL JOIN Article
+WHERE LoanerID = vLoanerID AND 
+      ((DATE(ReturnedDate) IS NULL AND 
+        DATE(PeriodEnd) > CURDATE()) OR 
+       (DATE(ReturnedDate) IS NOT NULL AND 
+        DATE(PeriodEnd) < DATE(ReturnedDate)));
 END; //
 DELIMITER ;
-#call GetLoanersArticlesReturnedTooLate(5002);
+#CALL GetLoanersArticlesReturnedTooLate(5002);
 
 #get all articles that a librarian is currently resposible for
 DROP PROCEDURE IF EXISTS GetLibrarianArticlesResponsibleFor;
@@ -131,22 +138,22 @@ DELIMITER //
 CREATE PROCEDURE ChangeArticleOwnerLibrary
 (IN vArticleID INT ,IN vnewOwnerLibraryID INT)
 BEGIN
-declare newLibraryID INT default NULL;
-#need to fix that the below line doesnt' work properly
-#SET TRANSACTION READ WRITE;
-start transaction;
-update Article set BelongsToID = vnewOwnerLibraryID where ArticleID = vArticleID;
+DECLARE newLibraryID INT DEFAULT NULL;
+START TRANSACTION;
+UPDATE Article SET BelongsToID = vnewOwnerLibraryID 
+               WHERE ArticleID = vArticleID;
 
 #verify that the value changed
-set newLibraryID = (select BelongsToID from Article where ArticleID = vArticleID);
-if newLibraryID = vnewOwnerLibraryID then
-	commit;
-else
-	rollback;
-end if;
+SET newLibraryID = (SELECT BelongsToID FROM Article 
+                    WHERE ArticleID = vArticleID);
+IF newLibraryID = vnewOwnerLibraryID THEN
+	COMMIT;
+ELSE
+	ROLLBACK;
+END IF;
 END; //
-DELIMITER ;
-#call ChangeLibrarianWorkLibrary(3130, 1001);
+DELIMITER ;  
+#CALL ChangeArticleOwnerLibrary(3130, 1001);
 
 #move librarian from one library to another
 DROP PROCEDURE IF EXISTS ChangeLibrarianWorkLibrary;
@@ -154,19 +161,17 @@ DELIMITER //
 CREATE PROCEDURE ChangeLibrarianWorkLibrary
 (IN vLibrarianID INT ,IN vnewOwnerLibraryID INT)
 BEGIN
-declare newLibraryID INT default NULL;
-#need to fix that the below line doesnt' work properly
-#SET TRANSACTION READ WRITE;
-start transaction;
-update Librarian set LibraryID = vnewOwnerLibraryID where LibrarianID = vLibrarianID;
+DECLARE newLibraryID INT DEFAULT NULL;
+START TRANSACTION;
+UPDATE Librarian SET LibraryID = vnewOwnerLibraryID WHERE LibrarianID = vLibrarianID;
 
 #verify that the value changed
-set newLibraryID = (select LibraryID from Librarian where LibrarianID = vLibrarianID);
-if newLibraryID = vnewOwnerLibraryID then
-	commit;
-else
-	rollback;
-end if;
+SET newLibraryID = (SELECT LibraryID FROM Librarian WHERE LibrarianID = vLibrarianID);
+IF newLibraryID = vnewOwnerLibraryID THEN
+	COMMIT;
+ELSE
+	ROLLBACK;
+END IF;
 END; //
 DELIMITER ;
 #call ChangeLibrarianWorkLibrary(4001, 1001);
@@ -182,6 +187,7 @@ BEGIN
 RETURN CONCAT(COALESCE(vFirstName,''),' ',COALESCE(CONCAT(vMiddleName, ' '), ''),COALESCE(vLastName,''));
 END; //
 DELIMITER ;
+#SELECT ConcatName(FirstName, MiddleName, LastName) FROM Loaners;
 
 
 
@@ -193,22 +199,30 @@ CREATE TRIGGER Books_Before_Insert
 BEFORE INSERT ON Books FOR EACH ROW
 BEGIN
 DECLARE ISBNString CHAR(13);
-DECLARE d1 INT;
-DECLARE d2 INT;
-DECLARE d3 INT;
-DECLARE d4 INT;
-DECLARE d5 INT;
-DECLARE d6 INT;
-DECLARE d7 INT;
-DECLARE d8 INT;
-DECLARE d9 INT;
+DECLARE d1  INT;
+DECLARE d2  INT;
+DECLARE d3  INT;
+DECLARE d4  INT;
+DECLARE d5  INT;
+DECLARE d6  INT;
+DECLARE d7  INT;
+DECLARE d8  INT;
+DECLARE d9  INT;
 DECLARE d10 INT;
 DECLARE d11 INT;
 DECLARE d12 INT;
 DECLARE d13 INT;
 DECLARE ISBNSum INT;
 
+IF New.ISBN IS NULL THEN SIGNAL SQLSTATE 'HY000'
+	SET MYSQL_ERRNO = 1525, MESSAGE_TEXT = 'ISBN can not be NULL';
+END IF;
+
 set ISBNString = CAST(New.ISBN AS CHAR);
+
+IF CHAR_LENGTH(ISBNString) != 13 THEN SIGNAL SQLSTATE 'HY000'
+	SET MYSQL_ERRNO = 1525, MESSAGE_TEXT = 'Invalid ISBN';
+END IF;
 
 #get every digit in ISBN
 SET d1  = CONVERT((SUBSTRING(ISBNString,  1, 1)), SIGNED INTEGER);
@@ -234,7 +248,6 @@ END; //
 DELIMITER ;
 
 #verify ReturnedDate
-#(*) can't test before isbn values are fixed
 DROP TRIGGER IF EXISTS ArticleToLoans_Before_Update;
 DELIMITER //
 CREATE TRIGGER ArticleToLoans_Before_Update
@@ -250,20 +263,61 @@ END; //
 DELIMITER ;
 
 #make sure article isn't already loaned out
-#(*) can't test before isbn values are fixed
 DROP TRIGGER IF EXISTS ArticleToLoans_Before_Insert;
 DELIMITER //
 CREATE TRIGGER ArticleToLoans_Before_Insert
 BEFORE INSERT ON ArticleToLoans FOR EACH ROW
 BEGIN
 DECLARE isAlreadyLoanedOut INT;
-SET periodStart = (select PeriodStart from ArticleToLoans natural join Loans
-				   where LoanID = New.LoanID AND );
-IF New.ReturnedDate < periodStart THEN SIGNAL SQLSTATE 'HY000'
-	SET MYSQL_ERRNO = 1525, MESSAGE_TEXT = 'The return date can not be before the book was loaned out';
+SET isAlreadyLoanedOut = (SELECT COUNT(*) FROM ArticleToLoans NATURAL JOIN Loans
+						  WHERE New.ArticleID = ArticleID AND ReturnedDate IS NULL);
+IF isAlreadyLoanedOut = 1 THEN SIGNAL SQLSTATE 'HY000'
+	SET MYSQL_ERRNO = 1525, MESSAGE_TEXT = 'This article is already loaned out';
 END IF;
 END; //
 DELIMITER ;
 
 
 
+#--Events--
+DROP PROCEDURE IF EXISTS BackupLoans;
+DELIMITER //
+CREATE PROCEDURE BackupLoans()
+BEGIN
+DECLARE backupRowCount INT;
+DECLARE loansRowCount INT;
+
+START TRANSACTION;
+#create backup table first
+DROP TABLE IF EXISTS `Library`.`BackupLoans` ;
+CREATE TABLE IF NOT EXISTS `Library`.`BackupLoans` (
+  `LoanID` INT NOT NULL,
+  `LoanerID` INT NOT NULL,
+  `LibrarianID` INT NOT NULL,
+  `PeriodStart` DATE NOT NULL,
+  `PeriodEnd` DATE NOT NULL,
+  PRIMARY KEY (`LoanID`))
+ENGINE = InnoDB;
+
+#then copy to backup
+INSERT INTO BackupLoans SELECT * FROM Loans;
+
+SET backupRowCount = (SELECT COUNT(*) FROM BackupLoans);
+SET loansRowCount = (SELECT COUNT(*) FROM Loans);
+
+IF backupRowCount = loansRowCount THEN
+	COMMIT;
+ELSE
+	ROLLBACK;
+END IF;
+END; //
+DELIMITER ;
+#CALL BackupLoans();
+
+#make update of loans table
+DROP EVENT IF EXISTS UpdateLoansBackup;
+CREATE EVENT UpdateLoansBackup
+ON SCHEDULE EVERY 1 DAY
+DO CALL BackupLoans();
+
+SET GLOBAL event_scheduler = 1; 
