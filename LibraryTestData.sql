@@ -79,7 +79,6 @@ insert into `WrittenBy` values
 (6002,9783161484100),
 (6003,9780125041904);
 
-DELETE FROM RegisteredAt;
 /*Test data for RegisteredAt */
 insert into `RegisteredAt` values 
 (1001,5001,'2007-04-17'),
@@ -99,19 +98,18 @@ insert into `RegisteredAt` values
 (1002,5015,'2029-10-10');
 
 
-DELETE FROM Loans;
 /*Test data for Loans */
 #id starts at 7000
-/*
+
 insert into `Loans` values 
 (7001,5001,4001,'2017-02-12','2017-02-26'),
 (7002,5002,4002,'2016-08-01','2016-08-15'),
 (7004,5001,4002,'2017-02-01','2017-06-01'),
 (7003,5003,4003,'2025-09-14','2025-09-28');
-*/
-DELETE FROM ArticleToLoans;
+
+
 /*Test data for ArticleToLoans */
-/*
+
 insert into `ArticleToLoans` values 
 (3001,7001,'2017-02-25'),
 (3022,7001,'2017-02-25'),
@@ -119,7 +117,7 @@ insert into `ArticleToLoans` values
 (3001,7002,'2016-08-30'),
 (3001,7004,NULL),
 (3072,7003,'2025-09-26');
-*/
+
 
 /*Test data for LibraryOpeningHours */
 insert into `LibraryOpeningHours` values 
@@ -148,7 +146,6 @@ insert into `PhoneNumbers` values
 
 
 drop procedure if exists addBook;
-<<<<<<< HEAD
 DELIMITER //
 CREATE procedure addBook(Visbn        DECIMAL(13,0),
                          VPublisherID INT, 
@@ -192,28 +189,6 @@ END IF;
 SET ISBNtester = (SELECT ISBN FROM WrittenBy 
                   WHERE writtenby.ISBN=Visbn);
 IF ISBNtester IS NULL OR ISBNtester != Visbn THEN
-=======
-delimiter //
-create procedure addBook(Visbn decimal(13,0),VPublisherID INT, VDatePublish DATE, VTitle varchar(45), VPrice DECIMAL(6,2), VArticleID INT, VDateBought DATE, VPlacementID int, VBelongsToID int, VAuthersID int, Vcategory varchar(45))
-begin 
-declare ISBNtester decimal(13,0);
-
-start transaction;
-insert into `Books` values (Visbn,VPublisherID,VDatePublish,VTitle,VPrice, Vcategory);
-insert into `Article` values (VArticleID,VDateBought,VPlacementID,VBelongsToID,Visbn);
-insert into `WrittenBy` values (VAuthersID,Visbn);
-
-set ISBNtester = (select ISBN from Books where Books.ISBN=Visbn);
-if ISBNtester != Visbn then
-	rollback;
-end if;
-set ISBNtester = (select ISBN from Article where Article.ISBN=Visbn);
-if ISBNtester != Visbn then
-	rollback;
-end if;
-set ISBNtester = (select ISBN from WrittenBy where WrittenBy.ISBN=Visbn);
-if ISBNtester != Visbn then
->>>>>>> refs/remotes/origin/master
 	rollback;
 END IF;
 COMMIT;
@@ -314,7 +289,7 @@ insert into ArticleToLoans values (vArticleID, vLoanID, vReturnedDate);
 end; //
 delimiter ;
 
-call addLoan(7004, 5001, 4001, '2012-12-30', 3100, '2013-01-12');
+call addLoan(7034, 5001, 4001, '2012-12-30', 3100, '2013-01-12');
 call addLoan(7005, 5001, 4001, '2011-08-16', 3101, null);
 call addLoan(7006, 5001, 4001, '2012-02-27', 3102, '2012-03-15');
 call addLoan(7007, 5003, 4001, '2012-10-23', 3103, '2012-11-04');
@@ -347,13 +322,3 @@ call addLoan(7033, 5015, 4003, '2016-10-13', 3129, '2016-10-18');
 
 
 
-
-
-
-
-
-
-<<<<<<< HEAD
-=======
-
->>>>>>> refs/remotes/origin/master
