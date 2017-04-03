@@ -83,14 +83,16 @@ insert into `RegisteredAt` values
 DELETE FROM Loans;
 /*Test data for Loans */
 #id starts at 7000
+/*
 insert into `Loans` values 
 (7001,5001,4001,'2017-02-12','2017-02-26'),
 (7002,5002,4002,'2016-08-01','2016-08-15'),
 (7004,5001,4002,'2017-02-01','2017-06-01'),
 (7003,5003,4003,'2025-09-14','2025-09-28');
-
+*/
 DELETE FROM ArticleToLoans;
 /*Test data for ArticleToLoans */
+/*
 insert into `ArticleToLoans` values 
 (3001,7001,'2017-02-25'),
 (3022,7001,'2017-02-25'),
@@ -98,6 +100,7 @@ insert into `ArticleToLoans` values
 (3001,7002,'2016-08-30'),
 (3001,7004,NULL),
 (3072,7003,'2025-09-26');
+*/
 
 /*Test data for LibraryOpeningHours */
 insert into `LibraryOpeningHours` values 

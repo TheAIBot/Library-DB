@@ -45,7 +45,7 @@ ORDER BY LoanerName;
 #at a given date, here taken as'2017-02-25':
 SELECT Title, ArticleID, LoanerID
 FROM LoanedBookArticles
-WHERE (('2017-02-20' BETWEEN PeriodStart AND ReturnedDate) AND ReturnedDate IS NOT NULL) OR  # In the case that it haven't been returned yet.
+WHERE (ReturnedDate IS NOT NULL AND ('2017-02-20' BETWEEN PeriodStart AND ReturnedDate) ) OR  # In the case that it haven't been returned yet.
 	  ((PeriodStart <= '2017-02-20' ) AND ReturnedDate IS NULL)
 ORDER BY Title;
 
@@ -65,26 +65,21 @@ FROM LoanedBookArticles NATURAL JOIN Loaners #For every loaner and loan, one get
 GROUP BY LoanerID #
 ORDER BY LoanCount;
 
-#Finds the users that have lent the largest number of books over the years:
-
+#Finds the loaners that have lent the largest number of books over the years:
 SELECT LoanerName, LoanerID, LentCount
-FROM  (SELECT ConcatName(FirstName, MiddleName, LastName) AS LoanerName, LoanerID, COUNT(*) AS LentCount
-	   FROM LoanedBookArticles NATURAL JOIN Loaners #For every loaner and loan, one gets the loaners loan of a book.
-	   GROUP BY LoanerID #
-       ORDER BY LentCount) AS LoanerWithCount,
-	  (SELECT MAX(LentCount) AS MaxLent
-       FROM (SELECT COUNT(*) AS LentCount
-		     FROM LoanedBookArticles
-             GROUP BY LoanerID
-		     ORDER BY LentCount) AS numberOfLentBooks) AS MaxLentCount
+FROM (SELECT ConcatName(FirstName, MiddleName, LastName) AS LoanerName,
+             LoanerID, COUNT(ArticleID) AS LentCount
+      FROM   LoanedBookArticles NATURAL RIGHT OUTER JOIN Loaners 
+      GROUP BY LoanerID) AS LoanerWithCount,
+      
+     (SELECT MAX(LentCount) AS MaxLent
+      FROM (SELECT count(ArticleID) AS LentCount, LoanerID
+            FROM LoanedBookArticles NATURAL RIGHT OUTER JOIN Loaners 
+            GROUP BY LoanerID) AS numberOfLentBooks)
+      AS MaxLentCount
+      
 WHERE LoanerWithCount.LentCount = MaxLentCount.MaxLent
-GROUP BY LoanerID;
-
-SELECT MAX(MAX_LOAN_COUNT)
-FROM (SELECT count(*) AS MAX_LOAN_COUNT, LoanerID
-	  FROM LoanedBookArticles NATURAL JOIN Loaners #For every loaner and loan, one gets the loaners loan of a book.
-	  GROUP BY LoanerID #
-	  ORDER BY MAX_LOAN_COUNT) AS kage;
+ORDER BY LoanerName;
 
 #Find all the books (name) written by an auther an auther with a given name, here "Jesper Samsø Birch"(*)
 #Also gives the auther name, in the case that there are more authers with the same name
