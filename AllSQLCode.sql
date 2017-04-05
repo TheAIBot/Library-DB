@@ -297,7 +297,19 @@ SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
-#Views used in the query's:
+
+
+
+
+
+
+
+
+#-------------------------------------------------------------------------
+#-------------------------------------------------------------------------
+#--------------------------------SQL Views--------------------------------
+#-------------------------------------------------------------------------
+#-------------------------------------------------------------------------
 
 
 CREATE VIEW BookArticles AS
@@ -307,6 +319,27 @@ CREATE VIEW BookArticles AS
 CREATE VIEW LoanedBookArticles AS
 	SELECT *
 	FROM (Loans  NATURAL JOIN ArticleToLoans) NATURAL JOIN BookArticles;
+
+CREATE VIEW WrittenbyInfo AS
+    SELECT Title, Price, PublisherID,
+        (SELECT ISBN FROM WrittenBy 
+         WHERE WrittenBy.ISBN = Books.ISBN) 
+        AS ISBN,
+        (SELECT AuthersID FROM WrittenBy 
+         WHERE WrittenBy.ISBN = Books.ISBN) 
+        AS AuthersID
+FROM Books;
+
+CREATE VIEW AutherInfo AS
+    SELECT *,
+    (SELECT FirstName FROM Authers WHERE 
+    Authers.AuthersID=WrittenbyInfo.AuthersID) AS FirstName,
+    (SELECT MiddleName FROM Authers WHERE 
+    Authers.AuthersID=WrittenbyInfo.AuthersID) AS MiddleName,
+    (SELECT LastName FROM Authers WHERE 
+    Authers.AuthersID=WrittenbyInfo.AuthersID) AS LastName
+    FROM WrittenbyInfo;
+
 
 
 
@@ -456,7 +489,32 @@ END; //
 DELIMITER ;
 #call GetLibrarysCurrentlyLoanedOutArticles(1002);
 
+#procedure to check if article is already loaned
+DROP PROCEDURE IF EXISTS articleTestDate;
+DELIMITER //
+CREATE PROCEDURE articleTestDate(vArticle INT)
+BEGIN
+DECLARE article_loaned VARCHAR(15);
+DECLARE counter INT;
+DECLARE counterArt INT;
 
+(SELECT COUNT(*) INTO counterArt FROM article 
+WHERE article.ArticleID = vArticle);
+
+(SELECT COUNT(*) INTO counter FROM articletoloans 
+WHERE (ArticleToLoans.ArticleID = vArticle AND 
+       ArticleToLoans.ReturnedDate IS NULL));
+       
+IF (counter = 0 AND counterArt = 1) THEN 
+    SET article_loaned = 'Avaiable';
+ELSEIF (counter = 1 AND counterArt = 1) THEN 
+    SET article_loaned = 'Loaned out';
+ELSE 
+    SET article_loaned = 'Invalid article';
+END IF;
+SELECT article_loaned;
+end;//
+DELIMITER ;
 
 
 
@@ -505,6 +563,44 @@ END; //
 DELIMITER ;
 #call ChangeLibrarianWorkLibrary(4001, 1001);
 
+#add a book and article from an already existing publisher and auther to the library
+DROP PROCEDURE IF EXISTS addBook;
+DELIMITER //
+CREATE procedure addBook(Visbn        DECIMAL(13,0),
+                         VPublisherID INT, 
+                         VDatePublish DATE,
+                         VTitle       VARCHAR(45), 
+                         VPrice       DECIMAL(6,2), 
+                         VArticleID   INT, 
+                         VDateBought  DATE, 
+                         VPlacementID INT, 
+                         VBelongsToID INT, 
+                         VAuthersID   INT, 
+                         Vcategory    VARCHAR(45))
+BEGIN 
+DECLARE ISBNtester DECIMAL(13,0);
+
+START TRANSACTION;
+INSERT INTO `Books` VALUES (Visbn,VPublisherID,VDatePublish,VTitle,VPrice,Vcategory);
+INSERT INTO `Article`   VALUES (VArticleID,VDateBought,VPlacementID,VBelongsToID,Visbn);
+INSERT INTO `Writtenby` VALUES (VAuthersID,Visbn);
+
+SET ISBNtester = (SELECT ISBN FROM Books WHERE Books.ISBN=Visbn);
+IF ISBNtester IS NULL OR ISBNtester != Visbn THEN
+	rollback;
+END IF;
+SET ISBNtester = (SELECT ISBN FROM Article WHERE Article.ISBN=Visbn);
+IF ISBNtester IS NULL OR ISBNtester != Visbn THEN
+	rollback;
+END IF;
+SET ISBNtester = (SELECT ISBN FROM WrittenBy WHERE Writtenby.ISBN=Visbn);
+IF ISBNtester IS NULL OR ISBNtester != Visbn THEN
+	rollback;
+END IF;
+COMMIT;
+
+END; //
+DELIMITER ;
 
 
 #--functions--
@@ -1121,20 +1217,18 @@ HAVING COUNT(ReadBooksByAuthors.ISBN) = COUNT(AuthersBooks.ISBN);
        
 SELECT FirstName, Title FROM Loaners NATURAL JOIN LoanedBookArticles ORDER BY FirstName;
 
+#see how many articles each loaner have loaned
+SELECT LoanerID, COUNT(LoanID) as loans FROM loans GROUP BY LoanerID;
 
+#Now it's time for a salary raise of 5%, however on person Anders Samsø Birch earns too much
+#when comparing the other librarians that has a lot more work experience, and should lose 25%
+#Furthermore one would like to see the changes to the salaries of the librarians
+select * from librarian;
+update librarian set Salary=Salary*1.05 where Salary<28500;
+update librarian set Salary=Salary*0.75 where Salary>=30000;
+select * from librarian;
 
-
-
-
-
-
-#-------------------------------------------------------------------------
-#-------------------------------------------------------------------------
-#--------------------------------SQL Views--------------------------------
-#-------------------------------------------------------------------------
-#-------------------------------------------------------------------------
-
-
-
-
-
+#we now wish to update the middle name of Flemming Schimidt as he got married with fru Hansen
+select MiddleName, FirstName from Authers where FirstName='Flemming';
+update Authers set MiddleName='Hansen' where FirstName='Flemming';
+select MiddleName, FirstName from Authers where FirstName='Flemming';
